@@ -1,142 +1,50 @@
+#include <GL/glew.h>
 #include <nanogui/nanogui.h>
 #include <iostream>
 #include <string>
 #include "toolwindow.h"
 
-/*
-class DockWidget : public nanogui::Window
-{
-public:
-
-    Window( nanogui::Widget* parent) :  nanogui::Window(parent)
-    {
-
-    }
-
-private:
-
-    std::vector<nanogui::Window*> mLeft;
-    std::vector<nanogui::Window*> mTop;
-    std::vector<nanogui::Window*> mRight;
-    std::vector<nanogui::Window*> mBottom;
-
-};//class DockWidget
+using namespace nanogui;
 
 class MainWindow : public nanogui::Screen
 {
 public:
-    MainWindow() : nanogui::Screen(nanogui::Vector2i(1024, 768), "NanoGUI Test")
+    MainWindow(const nanogui::Vector2i &size, const std::string &caption,
+               bool resizable = true, bool fullscreen = false, int colorBits = 8,
+               int alphaBits = 8, int depthBits = 24, int stencilBits = 8,
+               int nSamples = 0,
+               unsigned int glMajor = 3, unsigned int glMinor = 3)
+               : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples)
     {
-        using namespace nanogui;
+        performLayout();
+    }
 
-        //        Window *window = new Window(this, "Button demo");
-        //        window->setPosition(Vector2i(15, 15));
-        //        window->setLayout(new GroupLayout());
+    ~MainWindow()
+    {
 
-        //         No need to store a pointer, the data structure will be automatically
-        //           freed when the parent window is deleted */
-        //        new Label(window, "Push buttons", "sans-bold");
+    }
 
-        //        Button *b = new Button(window, "Plain button");
-        //        b->setCallback([] { std::cout << "pushed!" << std::endl; });
-        //        b->setTooltip("short tooltip");
-//        ToolWindow * window = new ToolWindow(this, "Tool widgets");
-//        /////////////////
-//        //window->setLayout(window->buttonPanel()->)
+    virtual bool keyboardEvent(int key, int scancode, int action, int modifiers) {
+        if (Screen::keyboardEvent(key, scancode, action, modifiers))
+            return true;
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+            setVisible(false);
+            return true;
+        }
+        return false;
+    }
 
-//        /////////////////
-//        window->setPosition(Vector2i(0,0));
-//        window->setFixedSize(nanogui::Vector2i(800, 600));
-//        window->setLayout(new GroupLayout());
+    virtual void draw(NVGcontext *ctx)
+    {
+        Screen::draw(ctx);
+    }
 
-//        TabWidget* tabWidget = window->add<TabWidget>();
-//        tabWidget->setSize(nanogui::Vector2i(600, 400));
+    virtual void drawContents()
+    {
+    }
+private:
+};
 
-//        Widget* layer = tabWidget->createTab("Color Wheel");
-//        layer->setLayout(new GroupLayout());
-
-//        // Use overloaded variadic add to fill the tab widget with Different tabs.
-//        layer->add<Label>("Color wheel widget", "sans-bold");
-//        layer->add<ColorWheel>();
-
-//        layer = tabWidget->createTab("Function Graph");
-//        layer->setLayout(new GroupLayout());
-
-//        layer->add<Label>("Function graph widget", "sans-bold");
-
-//        Graph *graph = layer->add<Graph>("Some Function");
-
-//        graph->setHeader("E = 2.35e-3");
-//        graph->setFooter("Iteration 89");
-//        VectorXf &func = graph->values();
-//        func.resize(100);
-//        for (int i = 0; i < 100; ++i)
-//            func[i] = 0.5f * (0.5f * std::sin(i / 10.f) +
-//                              0.5f * std::cos(i / 23.f) + 1);
-
-//        // Dummy tab used to represent the last tab button.
-//        tabWidget->createTab("+");
-
-//        // A simple counter.
-//        int counter = 1;
-//        tabWidget->setCallback([tabWidget, this, counter] (int index) mutable
-//        {
-//            if (index == (tabWidget->tabCount()-1))
-//            {
-//                // When the "+" tab has been clicked, simply add a new tab.
-//                std::string tabName = "Dynamic " + std::to_string(counter);
-//                Widget* layerDyn = tabWidget->createTab(index, tabName);
-//                layerDyn->setLayout(new GroupLayout());
-//                layerDyn->add<Label>("Function graph widget", "sans-bold");
-//                Graph *graphDyn = layerDyn->add<Graph>("Dynamic function");
-
-//                graphDyn->setHeader("E = 2.35e-3");
-//                graphDyn->setFooter("Iteration " + std::to_string(index*counter));
-//                VectorXf &funcDyn = graphDyn->values();
-//                funcDyn.resize(100);
-//                for (int i = 0; i < 100; ++i)
-//                    funcDyn[i] = 0.5f *
-//                            std::abs((0.5f * std::sin(i / 10.f + counter) +
-//                                      0.5f * std::cos(i / 23.f + 1 + counter)));
-//                ++counter;
-//                // We must invoke perform layout from the screen instance to keep everything in order.
-//                // This is essential when creating tabs dynamically.
-//                performLayout();
-//                // Ensure that the newly added header is visible on screen
-//                tabWidget->ensureTabVisible(index);
-
-//            }
-//        });
-//        performLayout();
-//    }
-
-//    ~MainWindow()
-//    {
-
-//    }
-
-//    virtual bool keyboardEvent(int key, int scancode, int action, int modifiers) {
-//        if (Screen::keyboardEvent(key, scancode, action, modifiers))
-//            return true;
-//        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-//            setVisible(false);
-//            return true;
-//        }
-//        return false;
-//    }
-
-//    virtual void draw(NVGcontext *ctx)
-//    {
-//        Screen::draw(ctx);
-//    }
-
-//    virtual void drawContents()
-//    {
-//    }
-//private:
-
-//    nanogui::Window* mDock;
-//};
 
 int main(int /* argc */, char ** /* argv */)
 {
@@ -145,14 +53,29 @@ int main(int /* argc */, char ** /* argv */)
         nanogui::init();
 
         {
-            nanogui::ref<nanogui::ToolWindow> app = new nanogui::ToolWindow();
+            auto window = MainWindow(Vector2i(800, 600), "FM");
+            window.setVisible(true);
+            window.setResizeCallback([&](const Vector2i& v)
+            {
+                window.drawAll();
+            });
 
-            app->drawAll();
-            app->setVisible(true);
-            nanogui::mainloop();
+            Theme* t(window.theme());
+            t->mDropShadow = Color(1.0f, 0.0f, 0.0f, 1.0f);
+            window.setBackground(Color(1.0f, 1.0f, 1.0f, 1.0f));
+
+            ref<Window> panel = new Window(&window, "Panel");
+
+            panel->setFixedSize(Vector2i(400, 400));
+            panel->setVisible(true);
+
+            window.performLayout();
+            window.drawAll();
+
+            mainloop();
         }
 
-        nanogui::shutdown();
+        shutdown();
     }
     catch (const std::runtime_error &e)
     {
