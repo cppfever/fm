@@ -2,48 +2,65 @@
 #include <nanogui/nanogui.h>
 #include <iostream>
 #include <string>
-#include "toolwindow.h"
+#include "mainwindow.h"
 
-using namespace nanogui;
+namespace nanogui
+{
 
-class MainWindow : public nanogui::Screen
+class Panel : public nanogui::Widget
 {
 public:
-    MainWindow(const nanogui::Vector2i &size, const std::string &caption,
-               bool resizable = true, bool fullscreen = false, int colorBits = 8,
-               int alphaBits = 8, int depthBits = 24, int stencilBits = 8,
-               int nSamples = 0,
-               unsigned int glMajor = 3, unsigned int glMinor = 3)
-               : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples)
+
+    Panel(Widget *parent) : nanogui::Widget(parent)
+    {}
+
+    void draw(NVGcontext *ctx) override
     {
-        performLayout();
-    }
+        Widget::draw(ctx);
 
-    ~MainWindow()
-    {
+        nvgBeginPath(ctx);
+        nvgRoundedRect(ctx, mPos.x() + 1, mPos.y() + 1.0f, mSize.x() - 2,
+                       mSize.y() - 2, mTheme->mButtonCornerRadius - 1);
 
-    }
+        NVGcolor gradTop = mTheme->mButtonGradientTopUnfocused;
+        NVGcolor gradBot = mTheme->mButtonGradientBotUnfocused;
 
-    virtual bool keyboardEvent(int key, int scancode, int action, int modifiers) {
-        if (Screen::keyboardEvent(key, scancode, action, modifiers))
-            return true;
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-            setVisible(false);
-            return true;
+        if(mBackgroundColor.w() != 0)
+        {
+            nvgFillColor(ctx, Color(mBackgroundColor.head<3>(), 1.f));
+            nvgFill(ctx);
+            double v = 1 - mBackgroundColor.w();
+                gradTop.a = gradBot.a = mEnabled ? v : v * .5f + .5f;
         }
-        return false;
+
+        NVGpaint bg = nvgLinearGradient(ctx, mPos.x(), mPos.y(), mPos.x(),
+                                        mPos.y() + mSize.y(), gradTop, gradBot);
+
+        nvgFillPaint(ctx, bg);
+        nvgFill(ctx);
+
+        nvgBeginPath(ctx);
+        nvgStrokeWidth(ctx, 1.0f);
+        nvgRoundedRect(ctx, mPos.x() + 0.5f, mPos.y() + 1.5f, mSize.x() - 1,
+                       mSize.y() - 1 - 1.0f, mTheme->mButtonCornerRadius);
+        nvgStrokeColor(ctx, mTheme->mBorderLight);
+        nvgStroke(ctx);
+
+        nvgBeginPath(ctx);
+        nvgRoundedRect(ctx, mPos.x() + 0.5f, mPos.y() + 0.5f, mSize.x() - 1,
+                       mSize.y() - 2, mTheme->mButtonCornerRadius);
+        nvgStrokeColor(ctx, mTheme->mBorderDark);
+        nvgStroke(ctx);
     }
 
-    virtual void draw(NVGcontext *ctx)
-    {
-        Screen::draw(ctx);
-    }
-
-    virtual void drawContents()
-    {
-    }
 private:
+
+    Color mBackgroundColor {255, 0, 0 , 255};
 };
+
+}//namespace nanogui
+
+
 
 
 int main(int /* argc */, char ** /* argv */)
@@ -53,29 +70,33 @@ int main(int /* argc */, char ** /* argv */)
         nanogui::init();
 
         {
-            auto window = MainWindow(Vector2i(800, 600), "FM");
-            window.setVisible(true);
-            window.setResizeCallback([&](const Vector2i& v)
-            {
-                window.drawAll();
-            });
+            auto screen = nanogui::Screen(nanogui::Vector2i(800, 600), "FM");
+            screen.setVisible(true);
+            screen.theme()->mButtonCornerRadius = 10;
+            screen.theme()->mButtonCornerRadius = 3;
+            screen.setResizeCallback([&](nanogui::Vector2i){screen.drawAll();});
 
-            Theme* t(window.theme());
-            t->mDropShadow = Color(1.0f, 0.0f, 0.0f, 1.0f);
-            window.setBackground(Color(1.0f, 1.0f, 1.0f, 1.0f));
+            auto caption = new nanogui::Panel(&screen);
+            //auto caption = new nanogui::Button(&screen);
+            caption->setVisible(true);
+            caption->setPosition(nanogui::Vector2i(10, 10));
+            caption->setFixedSize(nanogui::Vector2i(100, 100));
 
-            ref<Window> panel = new Window(&window, "Panel");
+            auto label = new nanogui::Label(&screen,"labelsssssssssss");
+            label->setFontSize(30);
+            label->setColor(nanogui::Color(0,0,0,255));
+            label->setVisible(true);
+            label->setPosition(nanogui::Vector2i(50, 50));
+            label->setFixedSize(nanogui::Vector2i(800, 400));
 
-            panel->setFixedSize(Vector2i(400, 400));
-            panel->setVisible(true);
+            screen.performLayout();
+            screen.drawWidgets();
+            screen.drawAll();
 
-            window.performLayout();
-            window.drawAll();
-
-            mainloop();
+            nanogui::mainloop();
         }
 
-        shutdown();
+        nanogui::shutdown();
     }
     catch (const std::runtime_error &e)
     {

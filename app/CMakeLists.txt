@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.1)
 
-project(editor)
+project(filemanager)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_definitions(UNICODE)
 
-add_executable(editor main.cpp)
+add_executable(filemanager main.cpp)
 
-target_link_libraries(editor nanogui ${NANOGUI_EXTRA_LIBS})
+target_link_libraries(filemanager nanogui ${NANOGUI_EXTRA_LIBS})
 
 # Compile a target using NanoGUI
 #add_executable(myTarget myTarget.cpp)
