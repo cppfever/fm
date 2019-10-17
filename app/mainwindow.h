@@ -1,8 +1,10 @@
 #pragma once
 
 #include <nanogui/screen.h>
+#include "panel.h"
 
-NAMESPACE_BEGIN(nanogui)
+namespace nanogui
+{
 
 class MainWindow : public nanogui::Screen
 {
@@ -12,9 +14,26 @@ public:
                int alphaBits = 8, int depthBits = 24, int stencilBits = 8,
                int nSamples = 0,
                unsigned int glMajor = 3, unsigned int glMinor = 3)
-               : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples)
+        : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples)
     {
-        Screen::performLayout();
+        setResizeCallback([&](nanogui::Vector2i)
+        {
+            performLayout();
+            drawAll();
+        });
+
+        m_boxlayout = new BoxLayout(Orientation::Vertical, Alignment::Fill, 10, 10);
+        this->setLayout(m_boxlayout);
+        m_caption = new Panel(this);
+        m_caption->setHeight(20);
+
+        m_toolbar = new Panel(this);
+        m_toolbar->setHeight(20);
+
+        m_statusbar = new Panel(this);
+        m_statusbar->setHeight(20);
+
+        performLayout();
     }
 
     ~MainWindow()
@@ -22,7 +41,7 @@ public:
 
     }
 
-    virtual bool keyboardEvent(int key, int scancode, int action, int modifiers) override
+    bool keyboardEvent(int key, int scancode, int action, int modifiers) override
     {
         if (Screen::keyboardEvent(key, scancode, action, modifiers))
             return true;
@@ -33,16 +52,23 @@ public:
         return false;
     }
 
-    virtual void draw(NVGcontext *ctx) override
+    /*   void performLayout(NVGcontext *ctx) override
     {
-       // Screen::draw(ctx);
+        performLayout();
+    }*/
+
+    void draw(NVGcontext *ctx) override
+    {
+        Screen::draw(ctx);
     }
 
-    virtual void drawContents() override
-    {
-    }
 private:
+
+    BoxLayout* m_boxlayout;
+    Panel* m_caption;
+    Panel* m_toolbar;
+    Panel* m_statusbar;
+
 };
 
-
-NAMESPACE_END(nanogui)
+}//namespace nanogui
