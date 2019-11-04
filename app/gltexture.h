@@ -38,6 +38,8 @@ public:
 
     GLuint texture() const { return mTextureId; }
     const std::string& textureName() const { return mTextureName; }
+    Vector2i size(){ return Vector2i(mWidth, mHeight); }
+    Vector2f sizeF(){ return Vector2f(mWidth, mHeight); }
 
     /**
     *  Load a file in memory and create an OpenGL texture.
@@ -50,7 +52,7 @@ public:
         }
         int force_channels = 0;
         int w, h, n;
-        handleType textureData(stbi_load(fileName.c_str(), &w, &h, &n, force_channels), stbi_image_free);
+        handleType textureData(stbi_load(fileName.c_str(), &mWidth, &mHeight, &n, force_channels), stbi_image_free);
         if (!textureData)
             throw std::invalid_argument("Could not load texture data from file " + fileName);
         glGenTextures(1, &mTextureId);
@@ -64,7 +66,7 @@ public:
             case 4: internalFormat = GL_RGBA8; format = GL_RGBA; break;
             default: internalFormat = 0; format = 0; break;
         }
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, format, GL_UNSIGNED_BYTE, textureData.get());
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mWidth, mHeight, 0, format, GL_UNSIGNED_BYTE, textureData.get());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -75,6 +77,8 @@ public:
 private:
     std::string mTextureName;
     GLuint mTextureId;
+    int mWidth {0};
+    int mHeight {0};
 };
 
 }//namespace nanogui
