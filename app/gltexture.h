@@ -38,8 +38,8 @@ public:
 
     GLuint texture() const { return mTextureId; }
     const std::string& textureName() const { return mTextureName; }
-    Vector2i size(){ return Vector2i(mWidth, mHeight); }
-    Vector2f sizeF(){ return Vector2f(mWidth, mHeight); }
+    Vector2i size() const { return Vector2i(mWidth, mHeight); }
+    Vector2f sizeF() const { return Vector2f(mWidth, mHeight); }
 
     /**
     *  Load a file in memory and create an OpenGL texture.

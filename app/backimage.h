@@ -20,7 +20,7 @@ public:
         mBackShader.free();
     }
 
-    virtual void drawBackImage(NVGcontext *ctx)
+    virtual void draw(NVGcontext *ctx)
     {
         nvgEndFrame(ctx); // Flush the NanoVG draw stack, not necessary to call nvgBeginFrame afterwards.
 
@@ -28,10 +28,11 @@ public:
         // properly displayed inside the widget.
         const Screen* screen = mWidget->screen();
         assert(screen);
+        //center();
         Vector2f screenSize = screen->size().cast<float>();
-        Vector2f scaleFactor = 1.0 * mBackImage.sizeF().cwiseQuotient(screenSize);
+        Vector2f scaleFactor = mScale * mBackImage.sizeF().cwiseQuotient(screenSize);
         Vector2f positionInScreen = mWidget->absolutePosition().cast<float>();
-        Vector2f positionAfterOffset = positionInScreen;
+        Vector2f positionAfterOffset = positionInScreen + mOffset;
         Vector2f imagePosition = positionAfterOffset.cwiseQuotient(screenSize);
         glEnable(GL_SCISSOR_TEST);
         float r = screen->pixelRatio();
@@ -44,19 +45,13 @@ public:
         mBackShader.setUniform("image", 0);
         mBackShader.setUniform("scaleFactor", scaleFactor);
         mBackShader.setUniform("position", imagePosition);
-        mBackShader.drawIndexed(GL_TRIANGLES, 0, 2);
+        mBackShader.drawIndexed(GL_TRIANGLES, 0, 2);        
         glDisable(GL_SCISSOR_TEST);
     }
 
-    virtual void loadBackImage(const std::string& file)
+    virtual void load(const std::string& file)
     {
         mBackImage.load(file);
-
-        glBindTexture(GL_TEXTURE_2D, mBackImage.texture());
-        GLint w, h;
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
-        mBackImageSize = Vector2i(w, h);
 
         mBackShader.init(
                     "BackImageShader",
@@ -96,14 +91,111 @@ public:
         mBackShader.uploadAttrib("vertex", vertices);
     }
 
+    Vector2f coordinateAt(const Vector2f& position) const
+    {
+        auto imagePosition = position - mOffset;
+        return imagePosition / mScale;
+    }
+
+    Vector2f clampedCoordinateAt(const Vector2f& position) const
+    {
+        auto imageCoordinate = coordinateAt(position);
+        return imageCoordinate.cwiseMax(Vector2f::Zero()).cwiseMin(sizeF());
+    }
+
+    Vector2f positionForCoordinate(const Vector2f& imageCoordinate) const
+    {
+        return mScale*imageCoordinate + mOffset;
+    }
+
+    void setCoordinateAt(const Vector2f& position, const Vector2f& imageCoordinate)
+    {
+        // Calculate where the new offset must be in order to satisfy the image position equation.
+        // Round the floating point values to balance out the floating point to integer conversions.
+        mOffset = position - (imageCoordinate * mScale);
+
+        // Clamp offset so that the image remains near the screen.
+        mOffset = mOffset.cwiseMin(sizeF()).cwiseMax(-scaledSizeF());
+    }
+
+    //Vector2f positionF() const { return mWidget->position().cast<float>(); }
+    //Vector2f sizeF() const { return mWidget->size().cast<float>(); }
+
+    Vector2i size() const { return mBackImage.size(); }
+    Vector2i scaledSize() const { return (mScale * mBackImage.sizeF()).cast<int>(); }
+    Vector2f sizeF() const { return mBackImage.sizeF(); }
+    Vector2f scaledSizeF() const { return (mScale * mBackImage.sizeF()); }
+
+    const Vector2f& offset() const { return mOffset; }
+    void setOffset(const Vector2f& offset) { mOffset = offset; }
+    float scale() const { return mScale; }
+    void setScale(float scale) { mScale = scale > 0.01f ? scale : 0.01f; }
+
+    bool fixedOffset() const { return mFixedOffset; }
+    void setFixedOffset(bool fixedOffset) { mFixedOffset = fixedOffset; }
+    bool fixedScale() const { return mFixedScale; }
+    void setFixedScale(bool fixedScale) { mFixedScale = fixedScale; }
+
+    float zoomSensitivity() const { return mZoomSensitivity; }
+    void setZoomSensitivity(float zoomSensitivity) { mZoomSensitivity = zoomSensitivity; }
+
+    void center()
+    {
+        Vector2f sz(mWidget->width(), mWidget->height());
+        mOffset = (sz - scaledSizeF()) / 2;
+    }
+
+    void fit()
+    {
+        Vector2f sz(mWidget->width(), mWidget->height());
+        mScale = (sz.cwiseQuotient(mBackImage.sizeF())).minCoeff();
+        center();
+    }
+
+    void setScaleCentered(float scale)
+    {
+        auto centerPosition = mWidget->size().cast<float>() / 2;
+        auto p = coordinateAt(centerPosition);
+        mScale = scale;
+        setCoordinateAt(centerPosition, p);
+    }
+
+    void moveOffset(const Vector2f& delta) {
+        // Apply the delta to the offset.
+        mOffset += delta;
+        auto sizef = mWidget->size().cast<float>();
+
+        // Prevent the image from going out of bounds.
+        auto scaled_size = scaledSizeF();
+        if (mOffset.x() + scaled_size.x() < 0)
+            mOffset.x() = -scaled_size.x();
+        if (mOffset.x() > sizef.x())
+            mOffset.x() = sizef.x();
+        if (mOffset.y() + scaled_size.y() < 0)
+            mOffset.y() = -scaled_size.y();
+        if (mOffset.y() > sizef.y())
+            mOffset.y() = sizef.y();
+    }
+
+    void zoom(int amount, const Vector2f& focusPosition)
+    {
+        auto focusedCoordinate = coordinateAt(focusPosition);
+        float scaleFactor = std::pow(mZoomSensitivity, amount);
+        mScale = std::max(0.01f, scaleFactor * mScale);
+        setCoordinateAt(focusPosition, focusedCoordinate);
+    }
 
 protected:
 
     Widget* mWidget;
     GLShader mBackShader;
     GLTexture mBackImage;
-    Vector2i mBackImageSize;
 
+    float mScale {1.0};
+    Vector2f mOffset;
+    bool mFixedScale;
+    bool mFixedOffset;
+    float mZoomSensitivity = 1.1f;
 };//class Panel
 
 }//namespace nanogui

@@ -9,7 +9,7 @@
 namespace nanogui
 {
 
-class MainWindow : public Screen, BackImage
+class MainWindow : public Screen
 {
 public:
 
@@ -19,7 +19,7 @@ public:
                int nSamples = 0,
                unsigned int glMajor = 3, unsigned int glMinor = 3)
         : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples),
-          BackImage(this)
+          mBackImage(this)
     {
         ::glewInit();
 
@@ -30,7 +30,7 @@ public:
             drawAll();
         });
 
-        loadBackImage("icons/icon1.png");
+        mBackImage.load("icons/icon1.png");
 
         mBoxLayout = new BoxLayout(Orientation::Vertical, Alignment::Fill, 10, 10);
         this->setLayout(mBoxLayout);
@@ -63,7 +63,7 @@ public:
     void draw(NVGcontext* ctx) override
     {
         nvgSave(ctx);
-        drawBackImage(ctx);
+        mBackImage.draw(ctx);
         Screen::draw(ctx);
         nvgRestore(ctx);
     }
@@ -74,6 +74,7 @@ private:
     Panel* mCaption {nullptr};
     Panel* mToolbar {nullptr};
     Panel* mStatusbar {nullptr};
+    BackImage mBackImage;
 };
 
 }//namespace nanogui
