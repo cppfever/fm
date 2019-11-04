@@ -2,13 +2,14 @@
 
 #include "std.h"
 #include <nanogui/nanogui.h>
-#include "panel.h"
 #include "gltexture.h"
+#include "backimage.h"
+#include "panel.h"
 
 namespace nanogui
 {
 
-class MainWindow : public nanogui::Screen
+class MainWindow : public Screen, BackImage
 {
 public:
 
@@ -17,7 +18,8 @@ public:
                int alphaBits = 8, int depthBits = 24, int stencilBits = 8,
                int nSamples = 0,
                unsigned int glMajor = 3, unsigned int glMinor = 3)
-        : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples)
+        : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples),
+          BackImage(this)
     {
         ::glewInit();
 
@@ -27,6 +29,8 @@ public:
             performLayout();
             drawAll();
         });
+
+        loadBackImage("icons/icon1.png");
 
         mBoxLayout = new BoxLayout(Orientation::Vertical, Alignment::Fill, 10, 10);
         this->setLayout(mBoxLayout);
@@ -59,6 +63,7 @@ public:
     void draw(NVGcontext* ctx) override
     {
         nvgSave(ctx);
+        drawBackImage(ctx);
         Screen::draw(ctx);
         nvgRestore(ctx);
     }
