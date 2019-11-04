@@ -11,8 +11,7 @@ int main(int /* argc */, char ** /* argv */)
         {
             auto mainwindow = nanogui::MainWindow(nanogui::Vector2i(800, 600), "FM");
             mainwindow.setVisible(true);
-            mainwindow.theme()->mButtonCornerRadius = 10;
-            mainwindow.theme()->mButtonCornerRadius = 3;
+            mainwindow.theme()->mButtonCornerRadius = 5;
 
             mainwindow.performLayout();
 
@@ -25,6 +24,11 @@ int main(int /* argc */, char ** /* argv */)
     {
         std::string error_msg = std::string("Caught a fatal error: ") + std::string(e.what());
         std::cerr << error_msg << std::endl;
+        return -1;
+    }
+    catch(...)
+    {
+        std::cerr << "Some exception was caught..." << std::endl;
         return -1;
     }
 

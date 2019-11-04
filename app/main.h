@@ -1,16 +1,7 @@
 #pragma once
 
-//std
-#include <iostream>
-#include <string>
-
-//GL
-#include <GL/glew.h>
-#include <GL/gl.h>
-#include <GLFW/glfw3.h>
-
-//NanoGUI
-#include <nanogui/nanogui.h>
-
+#include "std.h"
+#include "gltexture.h"
 #include "panel.h"
+#include "filepanel.h"
 #include "mainwindow.h"
