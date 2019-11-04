@@ -11,17 +11,11 @@ public:
 
     FilePanel(Widget *parent) : Panel(parent)
     {
-        setDefaultSettings();
     }
 
     void draw(NVGcontext *ctx) override
     {
         Panel::draw(ctx);
-    }
-
-    void setDefaultSettings() override
-    {
-        Panel::setDefaultSettings();
     }
 
 protected:

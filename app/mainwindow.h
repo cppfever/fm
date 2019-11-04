@@ -9,7 +9,7 @@
 namespace nanogui
 {
 
-class MainWindow : public Screen
+class MainWindow : public Screen, public BackImage
 {
 public:
 
@@ -19,7 +19,7 @@ public:
                int nSamples = 0,
                unsigned int glMajor = 3, unsigned int glMinor = 3)
         : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples),
-          mBackImage(this)
+          BackImage(this)
     {
         ::glewInit();
 
@@ -30,7 +30,8 @@ public:
             drawAll();
         });
 
-        mBackImage.load("icons/icon1.png");
+        loadBackImage("icons/icon1.png");
+        mDrawRoundedRect = false;
 
         mBoxLayout = new BoxLayout(Orientation::Vertical, Alignment::Fill, 10, 10);
         this->setLayout(mBoxLayout);
@@ -38,6 +39,10 @@ public:
         mCaption = new Panel(this);
         mToolbar = new Panel(this);
         mStatusbar = new Panel(this);
+
+        mCaption->loadBackImage("icons/icon1.png");
+        mToolbar->loadBackImage("icons/icon2.png");
+        mStatusbar->loadBackImage("icons/icon3.png");
 
         mCaption->setHeight(100);
         mToolbar->setHeight(100);
@@ -63,7 +68,8 @@ public:
     void draw(NVGcontext* ctx) override
     {
         nvgSave(ctx);
-        mBackImage.draw(ctx);
+        Widget::draw(ctx);
+        drawBackImage(ctx);
         Screen::draw(ctx);
         nvgRestore(ctx);
     }
@@ -74,7 +80,6 @@ private:
     Panel* mCaption {nullptr};
     Panel* mToolbar {nullptr};
     Panel* mStatusbar {nullptr};
-    BackImage mBackImage;
 };
 
 }//namespace nanogui

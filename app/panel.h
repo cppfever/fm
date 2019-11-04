@@ -9,62 +9,24 @@
 namespace nanogui
 {
 
-class Panel : public Widget
+class Panel : public Widget, public BackImage
 {
 public:
 
-    Panel(Widget *parent) : Widget(parent), mBackImage(this)
+    Panel(Widget *parent) : Widget(parent), BackImage(this)
     {
-        setDefaultSettings();
+        setFontSize(theme()->mStandardFontSize);
+        setHeight(mPadding + mFontSize + mPadding);
     }
 
     ~Panel()
     {}
 
-    BackImage& backImage()
-    {
-        return mBackImage;
-    }
-
     void draw(NVGcontext *ctx) override
     {
         Widget::draw(ctx);
-
-
-       glEnable(GL_SCISSOR_TEST);
-        nvgBeginPath(ctx);
-
-        nvgRoundedRect(ctx, mPos.x(), mPos.y(), mSize.x(),
-                       mSize.y(), mCornerRadius);
-
-        mBackImage.draw(ctx);
-        NVGpaint bg = nvgLinearGradient(ctx, mPos.x(), mPos.y(), mPos.x(),
-                                        mPos.y() + mSize.y(), mTopGradient, mBottomGradient);
-
-        nvgFillPaint(ctx, bg);
-        nvgFill(ctx);
-        glDisable(GL_SCISSOR_TEST);
+        drawBackImage(ctx);
     }
-
-    virtual void setDefaultSettings()
-    {
-        setFontSize(theme()->mStandardFontSize);
-        mPadding = 5;
-        mCornerRadius = 30;//mTheme->mButtonCornerRadius;
-        mTopGradient = Color(0, 0, 255, 59);//mTheme->mButtonGradientTopUnfocused;
-        mBottomGradient = mTheme->mButtonGradientBotUnfocused;
-        setHeight(mPadding + mFontSize + mPadding);
-        mBackImage.load("icons/icon1.png");
-    }
-
-protected:
-
-    inline static int mPadding = 5;
-    int mCornerRadius;
-    Color mTopGradient;
-    Color mBottomGradient;
-    BackImage mBackImage;
-
 };//class Panel
 
 }//namespace nanogui
