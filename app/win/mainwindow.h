@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../std.h"
+#include <windows.h>
 #include "../gltexture.h"
 #include "../backimage.h"
 #include "../panel.h"
@@ -8,7 +9,7 @@
 namespace nanogui::win
 {
 
-class MainWindow : public nanogui::Screen, public nanogui::BackImage
+class MainWindow : public nanogui::Screen
 {
 public:
 
@@ -16,15 +17,26 @@ public:
                bool resizable = true, bool fullscreen = false, int colorBits = 8,
                int alphaBits = 8, int depthBits = 24, int stencilBits = 8,
                int nSamples = 0,
-               unsigned int glMajor = 3, unsigned int glMinor = 3)
-        : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples),
-          nanogui::BackImage(this)
+               unsigned int glMajor = 2, unsigned int glMinor = 1)
+        : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples)
     {
+        hWhd = ::glfwGetWin32Window(glfwWindow());
+
     }
 
     ~MainWindow()
     {}
 
+     bool resizeEvent(const Vector2i &size) override
+     {
+
+
+
+     }
+
+protected:
+
+    HWND hWhd {nullptr};
 };
 
 }//namespace nanogui::win

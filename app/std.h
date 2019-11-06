@@ -11,5 +11,14 @@
 //GL
 #include <GL/glew.h>
 #include <GL/gl.h>
+
+//GLFW3
 #include <GLFW/glfw3.h>
 
+//Windows platphorm
+#ifdef __WIN32__
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>>
+#endif
+
+#include <clipper.hpp>

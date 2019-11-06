@@ -1,3 +1,6 @@
 [submodule "ext/nanogui"]
 	path = ext/nanogui
 	url = https://github.com/wjakob/nanogui.git
+[submodule "ext/clipper"]
+	path = ext/clipper
+	url = https://github.com/vgui/clipper.git

@@ -27,6 +27,16 @@ public:
         Widget::draw(ctx);
         drawBackImage(ctx);
     }
+
+     bool mouseEnterEvent(const Vector2i &p, bool enter) override
+     {
+         if(enter)
+            screen()->setCaption("ok");
+         else
+            screen()->setCaption("no");
+
+         return true;
+     }
 };//class Panel
 
 }//namespace nanogui

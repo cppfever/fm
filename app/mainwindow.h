@@ -10,7 +10,7 @@
 namespace nanogui
 {
 
-class MainWindow : public win::MainWindow
+class MainWindow : public win::MainWindow, public BackImage
 {
 public:
 
@@ -18,10 +18,14 @@ public:
                bool resizable = true, bool fullscreen = false, int colorBits = 8,
                int alphaBits = 8, int depthBits = 24, int stencilBits = 8,
                int nSamples = 0,
-               unsigned int glMajor = 3, unsigned int glMinor = 3)
-        : win::MainWindow(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples)
+               unsigned int glMajor = 2, unsigned int glMinor = 1)
+        : win::MainWindow(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples),
+          BackImage(this)
     {
-        ::glewInit();
+        ::glfwMakeContextCurrent(glfwWindow());
+
+        if(::glewInit() != GLEW_OK)
+            throw std::runtime_error("FM: Glew initialization failed.");
 
         setBackground(Color(127, 127, 127, 255));
         setResizeCallback([&](nanogui::Vector2i)
@@ -79,7 +83,7 @@ private:
     BoxLayout* mBoxLayout {nullptr};
     Panel* mCaption {nullptr};
     Panel* mToolbar {nullptr};
-    Panel* mStatusbar {nullptr};
+    Panel* mStatusbar {nullptr};    
 };
 
 }//namespace nanogui

@@ -6,12 +6,9 @@ int main(int /* argc */, char ** /* argv */)
 {
     try
     {
-        nanogui::init();
+
 
         {
-            ::glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-//            ::glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
             auto mainwindow = nanogui::MainWindow(nanogui::Vector2i(800, 600), "FM");
             //::glfwSetWindowPos(mainwindow.glfwWindow(), 300, 300);
             //::glfwSetWindowAttrib(nullptr,0,0);//mainwindow.glfwWindow(), GLFW_DECORATED, GLFW_TRUE);
@@ -23,7 +20,7 @@ int main(int /* argc */, char ** /* argv */)
             nanogui::mainloop();
         }
 
-        nanogui::shutdown();
+
     }
     catch (const std::runtime_error &e)
     {
