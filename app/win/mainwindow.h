@@ -27,12 +27,12 @@ public:
     ~MainWindow()
     {}
 
-     bool resizeEvent(const Vector2i &size) override
+ /*    bool resizeEvent(const Vector2i &size) override
      {
 
 
 
-     }
+     }*/
 
 protected:
 
