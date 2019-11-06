@@ -9,7 +9,7 @@ int main(int /* argc */, char ** /* argv */)
         nanogui::init();
 
         {
-//            ::glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+            ::glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 //            ::glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
             auto mainwindow = nanogui::MainWindow(nanogui::Vector2i(800, 600), "FM");

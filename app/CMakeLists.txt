@@ -7,6 +7,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_definitions(UNICODE)
 
+if(UNIX)
+    message(STATUS "Unix detected for GLEW")
+    set(GLEW_LIB GLEW)
+elseif(WIN32)
+    message(STATUS "Win32 detected for GLEW32")
+    set(GLEW_LIB GLEW32)
+endif()
+
 add_executable(filemanager main.cpp)
-target_link_libraries(filemanager nanogui glew32 ${NANOGUI_EXTRA_LIBS})
+target_link_libraries(filemanager nanogui ${GLEW_LIB} ${OPENGL_LIBRARIES} ${NANOGUI_EXTRA_LIBS})
 
