@@ -19,7 +19,7 @@ public:
                int alphaBits = 8, int depthBits = 24, int stencilBits = 8,
                int nSamples = 0,
                unsigned int glMajor = 2, unsigned int glMinor = 1)
-        : win::MainWindow(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples),
+        : win::MainWindow(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples, glMajor, glMinor),
           BackImage(this)
     {
         ::glfwMakeContextCurrent(glfwWindow());

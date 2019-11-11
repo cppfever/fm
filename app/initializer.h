@@ -2,10 +2,7 @@
 
 #include "std.h"
 #include <nanogui/nanogui.h>
-#include "gltexture.h"
-#include "backimage.h"
-#include "panel.h"
-#include "win/mainwindow.h"
+
 
 namespace nanogui
 {
