@@ -10,7 +10,7 @@
 
 //GL
 #include <GL/glew.h>
-#include <GL/gl.h>
+//#include <GL/gl.h>
 
 //GLFW3
 #include <GLFW/glfw3.h>

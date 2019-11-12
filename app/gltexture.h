@@ -1,9 +1,11 @@
 #pragma once
 
+#pragma once
+
 #include "std.h"
+#include <nanogui/nanogui.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-#include <nanogui/nanogui.h>
 
 
 namespace nanogui

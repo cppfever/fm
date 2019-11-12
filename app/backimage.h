@@ -2,19 +2,24 @@
 
 #include "std.h"
 #include <nanogui/nanogui.h>
-#include "gltexture.h"
-#include "backimage.h"
+#include "themeex.h"
 
 
 namespace nanogui
 {
 
+template<typename T>
 class BackImage
 {
 public:
 
-    BackImage(Widget *widget) : mWidget(widget)
+    BackImage(T* widget) : mBackWidget(widget)
     {}
+
+    ~BackImage()
+    {
+        deleteBackImage();
+    }
 
     int backImage()
     {
@@ -25,23 +30,33 @@ public:
     {
         ::nvgBeginPath(ctx);
 
-        float x = mWidget->position().x();
-        float y = mWidget->position().y();
-        float width = mWidget->width();
-        float height = mWidget->height();
+        float x = mBackWidget->position().x();
+        float y = mBackWidget->position().y();
+        float width = mBackWidget->width();
+        float height = mBackWidget->height();
 
         NVGpaint paint {0};
 
         if(mBackImage)
-            paint = ::nvgImagePattern(ctx, x, y, width, height, mAngle, mBackImage, mTransparency);
+            paint = ::nvgImagePattern(ctx, x, y, width, height,
+                                      mBackWidget->themeex()->WidgetBackImageAngle,
+                                      mBackImage,
+                                      mBackWidget->themeex()->WidgetTransparency);
 
-        if(mDrawRoundedRect)
-            ::nvgRoundedRect(ctx, x, y, width, height, mCornerRadius);
-        else
+        if(mBackWidget->parent() == nullptr)//MainWindow is always rect
             ::nvgRect(ctx, x, y, width, height);
+        else
+        {
+            if(mBackWidget->themeex()->WidgetShape == WidgetShape::RoundRect)
+                ::nvgRoundedRect(ctx, x, y, width, height, mBackWidget->themeex()->WidgetCornerRadius);
+            else
+                ::nvgRect(ctx, x, y, width, height);
+        }
 
         if(!mBackImage)
-            paint = nvgLinearGradient(ctx, x, y, x, y + height, mTopGradient, mBottomGradient);
+            paint = nvgLinearGradient(ctx, x, y, x, y + height,
+                                      mBackWidget->themeex()->WidgetTopGradient,
+                                      mBackWidget->themeex()->WidgetBottomGradient);
 
         nvgFillPaint(ctx, paint);
         nvgFill(ctx);
@@ -49,20 +64,24 @@ public:
 
     void loadBackImage(const char* filename)
     {
-        mBackImage = ::nvgCreateImage(mWidget->screen()->nvgContext(), filename, 0);
+        mBackImage = ::nvgCreateImage(mBackWidget->screen()->nvgContext(), filename, 0);
     }
 
-protected:
+    void deleteBackImage()
+    {
+        if(mBackImage)
+        {
+            ::nvgDeleteImage(mBackWidget->screen()->nvgContext(), mBackImage);
+            mBackImage = 0;
+        }
 
-    Widget* mWidget {nullptr};
-    int mPadding = 5;
-    int mCornerRadius {30};
-    Color mTopGradient {0, 0, 255, 60};
-    Color mBottomGradient {58, 255};
+    }
+
+private:
+
     int mBackImage {0};
-    float mAngle {0.0f};
-    float mTransparency {0.5f};
-    bool mDrawRoundedRect {true};
+    T* mBackWidget {nullptr};
+
 };//class BackImage
 
 }//namespace nanogui

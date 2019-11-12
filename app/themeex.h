@@ -19,26 +19,20 @@ class ThemeEx : public Theme
 public:
 
     ThemeEx(NVGcontext* ctx) : Theme(ctx)
-    {
-        DefaultWidgetShape = WidgetShape::TopRoundRect;
-        MainWindowShape = WidgetShape::TopRoundRect;
-        WidgetCornerRadius = 100;
-        WidgetShadowSize = 5;
-        ResizeWidth = 5;
-    }
+    {}
 
-    WidgetShape DefaultWidgetShape;
-    WidgetShape MainWindowShape;
-    std::uint32_t WidgetCornerRadius;
-    std::uint32_t WidgetShadowSize;
-    std::uint32_t ResizeWidth;
+    WidgetShape MainWindowShape {WidgetShape::Rect};
+    std::uint32_t MainWindowResizeThickness {5};
 
-protected:
+    WidgetShape WidgetShape {WidgetShape::RoundRect};
+    std::uint32_t WidgetPadding {5};
+    Color WidgetTopGradient {0, 0, 255, 60};
+    Color WidgetBottomGradient {58, 255};
+    float WidgetTransparency {0.5f};
+    std::uint32_t WidgetCornerRadius {15};
+    std::uint32_t WidgetShadowSize {5};
+    std::uint32_t WidgetBackImageAngle {0};
 
-    ~ThemeEx() override
-    {
-
-    }
 };//class ThemeEx
 
 }//namespace nanogui

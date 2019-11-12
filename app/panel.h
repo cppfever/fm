@@ -2,41 +2,28 @@
 
 #include "std.h"
 #include <nanogui/nanogui.h>
-#include "gltexture.h"
+#include "themeex.h"
 #include "backimage.h"
 
 
 namespace nanogui
 {
 
-class Panel : public Widget, public BackImage
+class Panel : public Widget, public BackImage<Panel>
 {
 public:
 
-    Panel(Widget *parent) : Widget(parent), BackImage(this)
-    {
-        setFontSize(theme()->mStandardFontSize);
-        setHeight(mPadding + mFontSize + mPadding);
-    }
+    Panel(Widget *parent);
+    ~Panel();
 
-    ~Panel()
-    {}
+    void draw(NVGcontext *ctx) override;
+    bool mouseEnterEvent(const Vector2i &p, bool enter) override;
+    ThemeEx* themeex();
 
-    void draw(NVGcontext *ctx) override
-    {
-        Widget::draw(ctx);
-        drawBackImage(ctx);
-    }
+protected:
 
-     bool mouseEnterEvent(const Vector2i &p, bool enter) override
-     {
-         if(enter)
-            screen()->setCaption("ok");
-         else
-            screen()->setCaption("no");
+    ThemeEx* mThemeEx {nullptr};
 
-         return true;
-     }
 };//class Panel
 
 }//namespace nanogui

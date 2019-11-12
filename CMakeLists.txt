@@ -31,6 +31,7 @@ set(NANOGUI_INSTALL       OFF CACHE BOOL " " FORCE)
 set(NANOGUI_USE_GLAD_DEFAULT OFF CACHE BOOL " " FORCE)
 add_definitions(${NANOGUI_EXTRA_DEFS})
 add_subdirectory(ext/nanogui)
+add_subdirectory(ext/clipper/cpp)
 # Copy icons for example application
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons DESTINATION ${FM_BINARY_DIR})
 include_directories(${NANOGUI_EXTRA_INCS})

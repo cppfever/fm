@@ -1,6 +1,8 @@
 #pragma once
 
-#include "panel.h"
+#include "std.h"
+#include <nanogui/nanogui.h>
+
 
 namespace nanogui
 {

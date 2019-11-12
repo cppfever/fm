@@ -1,45 +1,41 @@
 #pragma once
 
-#include "../std.h"
 #include <windows.h>
-#include "../themeex.h"
-#include "../gltexture.h"
-#include "../backimage.h"
-#include "../panel.h"
+#include "std.h"
+#include <nanogui/nanogui.h>
+#include "themeex.h"
 
-namespace nanogui::win
+
+namespace nanogui
 {
 
-class MainWindow : public nanogui::Screen
+class Win32MainWindow : public Screen
 {
 public:
 
-    MainWindow(const nanogui::Vector2i &size, const std::string &caption,
+    Win32MainWindow(const nanogui::Vector2i &size, const std::string &caption,
                bool resizable = true, bool fullscreen = false, int colorBits = 8,
                int alphaBits = 8, int depthBits = 24, int stencilBits = 8,
                int nSamples = 0,
                unsigned int glMajor = 2, unsigned int glMinor = 1)
-        : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples)
+        : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples),
+          mThemeEx(nvgContext())
     {
-        if(!sTheme)
-            sTheme = new ThemeEx(nvgContext());
-
-        setTheme(sTheme);
-        setShape(WidgetShape::TopRoundRect);
         mHwnd = ::glfwGetWin32Window(glfwWindow());
     }
 
-    ~MainWindow()
+    ~Win32MainWindow()
     {
         deleteRegions();
     }
-
+    /*
     bool resizeEvent(const Vector2i &size) override
     {
+        Screen::resizeEvent(size);
         deleteRegions();
         createRegions();
         return true;
-    }
+    }*/
 
     bool mouseMotionEvent(const Vector2i &p, const Vector2i &rel, int button, int modifiers) override
     {
@@ -47,38 +43,36 @@ public:
         return true;
     }
 
-    void setShape(WidgetShape shape)
+    ThemeEx* themeex()
     {
-        mShape = shape;
-        createRegions();
+        return &mThemeEx;
     }
 
 protected:    
 
     virtual void createRegions()
     {
-        ThemeEx* t = dynamic_cast<ThemeEx*>(theme());
         Vector2i s = size();
 
-        if(mShape == WidgetShape::Rect)
+        if(themeex()->MainWindowShape == WidgetShape::Rect)
         {
             mOuterRegion = ::CreateRectRgn(0, 0, s.x(), s.y());
         }
         else
-            if(mShape == WidgetShape::RoundRect)
+            if(themeex()->MainWindowShape == WidgetShape::RoundRect)
             {
                 mOuterRegion = ::CreateRoundRectRgn(0, 0, s.x(), s.y(),
-                                                            sTheme->WidgetCornerRadius,
-                                                            sTheme->WidgetCornerRadius);
+                                                    themeex()->WidgetCornerRadius,
+                                                    themeex()->WidgetCornerRadius);
             }
             else
-                if(mShape == WidgetShape::TopRoundRect)
+                if(themeex()->MainWindowShape == WidgetShape::TopRoundRect)
                 {
                     mOuterRegion = ::CreateRoundRectRgn(0, 0, s.x(), s.y(),
-                                                                sTheme->WidgetCornerRadius,
-                                                                sTheme->WidgetCornerRadius);
+                                                        themeex()->WidgetCornerRadius,
+                                                        themeex()->WidgetCornerRadius);
 
-                    HRGN bottomregion = ::CreateRectRgn(0, s.y() - sTheme->WidgetCornerRadius,
+                    HRGN bottomregion = ::CreateRectRgn(0, s.y() - themeex()->WidgetCornerRadius,
                                                         s.x(), s.y());
 
                     ::CombineRgn(mOuterRegion, mOuterRegion, bottomregion, RGN_OR);
@@ -97,11 +91,22 @@ protected:
         }
     }
 
+    friend class Initializer;
+
     HWND mHwnd {nullptr};
     HRGN mOuterRegion {nullptr};
+    HRGN mInnerRegion {nullptr};
+/*    HRGN mLeftRegion {nullptr};
+    HRGN mOuterRegion {nullptr};
+    HRGN mOuterRegion {nullptr};
+    HRGN mOuterRegion {nullptr};
+    HRGN mOuterRegion {nullptr};
+    HRGN mOuterRegion {nullptr};
+    HRGN mOuterRegion {nullptr};
+    HRGN mOuterRegion {nullptr};*/
+
     WidgetShape mShape;
+    ThemeEx mThemeEx;
+};//class Win32MainWindow
 
-    static inline ref<ThemeEx> sTheme;
-};
-
-}//namespace nanogui::win
+}//namespace nanogui
