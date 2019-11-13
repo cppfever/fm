@@ -16,7 +16,7 @@ MainWindow::MainWindow(const nanogui::Vector2i &size, const std::string &caption
     if(::glewInit() != GLEW_OK)
         throw std::runtime_error("MainWindow: Glew initialization failed.");
 
-    setBackground(Color(127, 127, 127, 255));
+    //setBackground(Color(127, 127, 127, 255));
     setResizeCallback([&](nanogui::Vector2i)
     {
         performLayout();
@@ -59,6 +59,7 @@ bool MainWindow::keyboardEvent(int key, int scancode, int action, int modifiers)
 
 void MainWindow::draw(NVGcontext* ctx)
 {
+    Win32MainWindow::draw(ctx);
     nvgSave(ctx);
     drawBackImage(ctx);
     Screen::draw(ctx);

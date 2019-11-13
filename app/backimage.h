@@ -35,7 +35,7 @@ public:
         float width = mBackWidget->width();
         float height = mBackWidget->height();
 
-        NVGpaint paint {0};
+        NVGpaint paint{0};
 
         if(mBackImage)
             paint = ::nvgImagePattern(ctx, x, y, width, height,
@@ -54,12 +54,12 @@ public:
         }
 
         if(!mBackImage)
-            paint = nvgLinearGradient(ctx, x, y, x, y + height,
+            paint = ::nvgLinearGradient(ctx, x, y, x, y + height,
                                       mBackWidget->themeex()->WidgetTopGradient,
                                       mBackWidget->themeex()->WidgetBottomGradient);
 
-        nvgFillPaint(ctx, paint);
-        nvgFill(ctx);
+        ::nvgFillPaint(ctx, paint);
+        ::nvgFill(ctx);
     }
 
     void loadBackImage(const char* filename)

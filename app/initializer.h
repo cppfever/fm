@@ -15,8 +15,8 @@ public:
     {
         nanogui::init();
 
-        ::glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-        ::glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        //::glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+        //::glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
         sStatus = true;
     }

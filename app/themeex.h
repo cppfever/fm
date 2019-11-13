@@ -23,6 +23,7 @@ public:
 
     WidgetShape MainWindowShape {WidgetShape::Rect};
     std::uint32_t MainWindowResizeThickness {5};
+    std::uint32_t MainWindowResizeSize {15};
 
     WidgetShape WidgetShape {WidgetShape::RoundRect};
     std::uint32_t WidgetPadding {5};
