@@ -35,7 +35,7 @@ public:
         float width = mBackWidget->width();
         float height = mBackWidget->height();
 
-        NVGpaint paint{0};
+        NVGpaint paint;
 
         if(mBackImage)
             paint = ::nvgImagePattern(ctx, x, y, width, height,

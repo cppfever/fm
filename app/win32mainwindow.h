@@ -76,12 +76,17 @@ protected:
         int y2thick = ythick * 2;
 
         mInner << IntPoint(xthick, ythick)
-               << IntPoint(width - x2thick , ythick )
-               << IntPoint(width - x2thick , height - y2thick)
-               << IntPoint(xthick, height - y2thick);
+               << IntPoint(width - xthick , ythick )
+               << IntPoint(width - xthick , height - ythick)
+               << IntPoint(xthick, height - ythick);
 
-        ::SetWindowRgn(mHwnd, mOuterRgn, TRUE);
-        ::UpdateWindow(mHwnd);
+        ClipperLib::Clipper clipper;
+        clipper.AddPath(mOuter, ClipperLib::ptSubject, true);
+        clipper.AddPath(mInner, ClipperLib::ptClip, true);
+        clipper.Execute(ClipperLib::ctDifference, mSizing,
+                        ClipperLib::pftEvenOdd, ClipperLib::pftEvenOdd);
+        //::SetWindowRgn(mHwnd, mOuterRgn, TRUE);
+        //::UpdateWindow(mHwnd);
     }
 
     virtual void deleteRegions()
@@ -91,17 +96,17 @@ protected:
             ::DeleteObject(mOuterRgn);
             mOuterRgn = nullptr;
         }
+
+        mOuter.clear();
+        mInner.clear();
+        mSizing.clear();
     }
 
     void drawPath(ClipperLib::Path& path, Color color)
-    {
-        if(path.size() < 2)
-            return;
-
+    {        
         NVGcontext* ctx = nvgContext();
-        ::nvgSave(ctx);
+
         ::nvgBeginPath(ctx);
-        NVGpaint paint{0};
 
         ::nvgMoveTo(ctx, path[0].X, path[0].Y);
         for(size_t i = 1; i < path.size(); i++)
@@ -109,19 +114,39 @@ protected:
 
         ::nvgClosePath(ctx);
 
-        //::nvgFillColor(ctx, color);
+        ::nvgFillColor(ctx, color);
         ::nvgFill(ctx);
-        ::nvgRestore(ctx);
+    }
+
+    void drawPaths(ClipperLib::Paths& paths, Color color)
+    {
+        NVGcontext* ctx = nvgContext();
+
+        for(size_t I = 0; I < paths.size(); I++)
+        {
+            ::nvgBeginPath(ctx);
+
+            ::nvgMoveTo(ctx, paths[I][0].X, paths[I][0].Y);
+
+            for(size_t i = 1; i < paths[I].size(); i++)
+                ::nvgLineTo(ctx, paths[I][i].X, paths[I][i].Y);
+
+            ::nvgClosePath(ctx);
+
+            ::nvgFillColor(ctx, color);
+            ::nvgFill(ctx);
+        }
     }
 
     void draw(NVGcontext* ctx) override
     {
-        drawPath(mInner, Color(127, 0, 0, 127));
+        drawPaths(mSizing,Color(255, 0, 0, 255));
     }
 
     HWND mHwnd {nullptr};
     HRGN mOuterRgn {nullptr};
     ThemeEx mThemeEx;
+    ClipperLib::Paths mSizing;
     ClipperLib::Path mOuter, mInner,
     mLeft, mTop, mRight, mBottom,
     mLeftTop, mRightTop, mLeftBottom, mRightBottom;
