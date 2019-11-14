@@ -15,6 +15,6 @@ elseif(WIN32)
     set(GLEW_LIB GLEW32)
 endif()
 
-add_executable(filemanager main.cpp mainwindow.cpp panel.cpp)
+add_executable(filemanager main.cpp mainwindow.cpp win32mainwindow.cpp panel.cpp)
 target_link_libraries(filemanager nanogui polyclipping  ${GLEW_LIB} ${OPENGL_LIBRARIES} ${NANOGUI_EXTRA_LIBS})
 

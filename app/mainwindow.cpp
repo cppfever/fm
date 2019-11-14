@@ -58,9 +58,9 @@ bool MainWindow::keyboardEvent(int key, int scancode, int action, int modifiers)
 }
 
 void MainWindow::draw(NVGcontext* ctx)
-{
-    Win32MainWindow::draw(ctx);
+{    
     drawBackImage(ctx);
     Screen::draw(ctx);
+    Win32MainWindow::draw(ctx);
 }
 }//namespace nanogui
