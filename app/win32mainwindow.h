@@ -57,6 +57,7 @@ protected:
 
     virtual void createRegions();
     virtual void deleteRegions();
+    void createSidePath(ClipperLib::Paths& subject, ClipperLib::Paths& solution, int x0, int y0, int x1, int y1);
     void drawPath(ClipperLib::Path& path);
     void drawPaths(ClipperLib::Paths& paths);
     void draw(NVGcontext* ctx) override;
@@ -64,8 +65,9 @@ protected:
     HWND mHwnd {nullptr};
     HRGN mOuterRgn {nullptr};
     ThemeEx mThemeEx;
-    ClipperLib::Paths mSizing;
-    ClipperLib::Path mOuter, mInner,
+    ClipperLib::Clipper mClipper;
+    ClipperLib::Paths mSizing,
+    mOuter, mInner,
     mLeft, mTop, mRight, mBottom,
     mLeftTop, mRightTop, mLeftBottom, mRightBottom;
 };//class Win32MainWindow
