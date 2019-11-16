@@ -57,19 +57,26 @@ protected:
 
     virtual void createRegions();
     virtual void deleteRegions();
-    void createSidePath(ClipperLib::Paths& subject, ClipperLib::Paths& solution, int x0, int y0, int x1, int y1);
-    void drawPath(ClipperLib::Path& path);
-    void drawPaths(ClipperLib::Paths& paths);
+    void createSidePath(Paths& solution, int x0, int y0, int x1, int y1);
+    void createCornerPath(Paths& solution, Paths& diff1, Paths& diff2, int x0, int y0, int x1, int y1, int x2, int y2,
+                           int x3, int y3, int x4, int y4, int x5, int y5);
+
+    void combinePaths(Paths& solution, Paths& subject, Paths& clip, ClipType op);
+    void drawPath(Path& path);
+    void drawPaths(Paths& paths, Color color);
     void draw(NVGcontext* ctx) override;
 
     HWND mHwnd {nullptr};
     HRGN mOuterRgn {nullptr};
     ThemeEx mThemeEx;
-    ClipperLib::Clipper mClipper;
-    ClipperLib::Paths mSizing,
+    Clipper mClipper;
+    Paths mSizing,
     mOuter, mInner,
     mLeft, mTop, mRight, mBottom,
     mLeftTop, mRightTop, mLeftBottom, mRightBottom;
+    bool mDrawSizingPaths {false};
+    bool mDrawHitTest {false};
+
 };//class Win32MainWindow
 
 }//namespace nanogui
