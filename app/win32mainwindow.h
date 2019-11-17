@@ -3,9 +3,9 @@
 #include <windows.h>
 #include "std.h"
 #include <nanogui/nanogui.h>
-#include <nanovg/nanovg.h>
-#include <nanovg/nanovg_gl.h>
-#include <nanovg/nanovg_gl_utils.h>
+//#include <nanovg.h>
+//#include <nanovg_gl.h>
+//#include <nanovg_gl_utils.h>
 #include <clipper.hpp>
 #include "themeex.h"
 
