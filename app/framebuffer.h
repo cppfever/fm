@@ -18,6 +18,11 @@ public:
     void draw(NVGcontext* ctx);
     void setDrawCallback(const std::function<void(NVGcontext *ctx)>& callback);
 
+    int image()
+    {
+        return mFbo->image;
+    }
+
 protected:
 
     NVGLUframebuffer* mFbo {nullptr};

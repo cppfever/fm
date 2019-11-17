@@ -27,7 +27,7 @@ void Framebuffer::draw(NVGcontext* ctx)
     ::nvgImageSize(ctx, mFbo->image, &width, &height);
     ::nvgluBindFramebuffer(mFbo);
     ::glViewport(0, 0, width, height);
-    ::glClearColor(0, 255, 0, 0);
+    ::glClearColor(0, 0, 0, 0);
     ::glClear(GL_COLOR_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
     ::nvgBeginFrame(ctx, width, height, 1.0f);
 
