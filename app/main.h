@@ -1,11 +1,10 @@
 #pragma once
 
-#include "std.h"
-#include <nanogui/nanogui.h>
-#include <clipper.hpp>
-
+#include "common.h"
+#include "exception.h"
 #include "initializer.h"
 #include "themeex.h"
+#include "framebuffer.h"
 #include "gltexture.h"
 #include "backimage.h"
 #include "panel.h"

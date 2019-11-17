@@ -1,9 +1,6 @@
 #pragma once
 
-#pragma once
-
-#include "std.h"
-#include <nanogui/nanogui.h>
+#include "common.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 

@@ -1,7 +1,5 @@
 #include "win32mainwindow.h"
 
-#include <nanovg_gl.h>
-#include <nanovg_gl_utils.h>
 
 namespace nanogui
 {
@@ -10,22 +8,22 @@ using namespace ClipperLib;
 
 Win32MainWindow::Win32MainWindow(const Vector2i &size, const std::string &caption, bool resizable, bool fullscreen, int colorBits, int alphaBits, int depthBits, int stencilBits, int nSamples, unsigned int glMajor, unsigned int glMinor)
     : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples, glMajor, glMinor),
-      mThemeEx(nvgContext())
+      mThemeEx(nvgContext()), mFbo(nvgContext(), 100, 100, NVG_IMAGE_NEAREST)
 {
     //mDrawSizingPaths = true;
     mDrawHitTest = true;
 
-    ::nvgluCreateFramebuffer(nvgContext(), 16, 16,0);
-//    GLuint fbo;
-//    //::glGenFramebuffersEXT(1, &fbo);
-
-//    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
-//    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-//    ::glDeleteFramebuffersEXT(1, &fbo);
-
     mHwnd = ::glfwGetWin32Window(glfwWindow());
     loadResources();
     createPaths();
+
+    mFbo.setDrawCallback([&](NVGcontext* ctx)
+    {
+        ::nvgBeginPath(ctx);
+
+        ::nvgFillColor(ctx, Color(0, 255, 0, 255));
+        ::nvgFill(ctx);
+    });
 }
 
 ThemeEx *Win32MainWindow::themeex()
@@ -311,6 +309,42 @@ bool Win32MainWindow::resizeHitTest(const IntPoint& point)
     {
         if(mDrawHitTest)
             drawPaths(mBottom, Color(255, 0, 0, 255));
+
+        ::glfwSetCursor(glfwWindow(), mVertCursor);
+        return true;
+    }
+
+    if(pointInPath(point, mLeftTop))
+    {
+        if(mDrawHitTest)
+            drawPaths(mLeftTop, Color(255, 0, 0, 255));
+
+        ::glfwSetCursor(glfwWindow(), mVertCursor);
+        return true;
+    }
+
+    if(pointInPath(point, mLeftBottom))
+    {
+        if(mDrawHitTest)
+            drawPaths(mLeftBottom, Color(255, 0, 0, 255));
+
+        ::glfwSetCursor(glfwWindow(), mVertCursor);
+        return true;
+    }
+
+    if(pointInPath(point, mRightBottom))
+    {
+        if(mDrawHitTest)
+            drawPaths(mRightBottom, Color(255, 0, 0, 255));
+
+        ::glfwSetCursor(glfwWindow(), mVertCursor);
+        return true;
+    }
+
+    if(pointInPath(point, mRightTop))
+    {
+        if(mDrawHitTest)
+            drawPaths(mRightTop, Color(255, 0, 0, 255));
 
         ::glfwSetCursor(glfwWindow(), mVertCursor);
         return true;

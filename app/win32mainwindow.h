@@ -1,13 +1,8 @@
 #pragma once
 
-#include <windows.h>
-#include "std.h"
-#include <nanogui/nanogui.h>
-//#include <nanovg.h>
-//#include <nanovg_gl.h>
-//#include <nanovg_gl_utils.h>
-#include <clipper.hpp>
+#include "common.h"
 #include "themeex.h"
+#include "framebuffer.h"
 
 
 namespace nanogui
@@ -51,6 +46,7 @@ protected:
 
     HWND mHwnd {nullptr};
     HRGN mOuterRgn {nullptr};
+
     ThemeEx mThemeEx;
     Clipper mClipper;
     Paths mSizing,
@@ -59,6 +55,8 @@ protected:
     mLeftTop, mRightTop, mLeftBottom, mRightBottom;
     bool mDrawSizingPaths {false};
     bool mDrawHitTest {false};
+
+    Framebuffer mFbo;
     GLFWcursor* mArrowCursor {nullptr};
     GLFWcursor* mHorCursor {nullptr};
     GLFWcursor* mVertCursor {nullptr};

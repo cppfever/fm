@@ -29,6 +29,7 @@ set(NANOGUI_USE_GLAD_DEFAULT ON CACHE BOOL " " FORCE)
 add_subdirectory(ext/nanogui)
 add_subdirectory(ext/clipper/cpp)
 include_directories(${NANOGUI_EXTRA_INCS})
+message("NanoGUI dependencies ${NANOGUI_EXTRA_INCS}")
 include_directories(ext/nanogui/include)
 ########### NanoGUI ################
 

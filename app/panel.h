@@ -1,9 +1,8 @@
 #pragma once
 
-#include "std.h"
-#include <nanogui/nanogui.h>
-#include "themeex.h"
+#include "common.h"
 #include "backimage.h"
+#include "themeex.h"
 
 
 namespace nanogui

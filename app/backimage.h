@@ -1,7 +1,6 @@
 #pragma once
 
-#include "std.h"
-#include <nanogui/nanogui.h>
+#include "common.h"
 #include "themeex.h"
 
 
