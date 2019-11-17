@@ -24,7 +24,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${FM_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${FM_BINARY_DIR})
 
 ###########            NanoGUI            ################
-# Disable building extras we won't need (pure C++ project)
+#Disable building extras we won't need (pure C++ project)
 set(NANOGUI_BUILD_EXAMPLE OFF CACHE BOOL " " FORCE)
 set(NANOGUI_BUILD_PYTHON  OFF CACHE BOOL " " FORCE)
 set(NANOGUI_INSTALL       OFF CACHE BOOL " " FORCE)
@@ -36,6 +36,7 @@ add_subdirectory(ext/clipper/cpp)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons DESTINATION ${FM_BINARY_DIR})
 include_directories(${NANOGUI_EXTRA_INCS})
 include_directories(ext/nanogui/include)
+
 include_directories(ext/clipper/cpp)
 
 # Application

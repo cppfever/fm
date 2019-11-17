@@ -6,14 +6,11 @@ int main(int /* argc */, char ** /* argv */)
 {
     try
     {
-        {
             auto mainwindow = MainWindow(Vector2i(800, 600), "FM");
+            ::glfwSetWindowPos(mainwindow.glfwWindow(), 300, 300);
             mainwindow.setVisible(true);
             mainwindow.performLayout();
             mainloop();
-        }
-
-
     }
     catch (const std::runtime_error &e)
     {

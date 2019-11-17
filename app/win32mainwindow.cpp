@@ -6,11 +6,53 @@ namespace nanogui
 
 using namespace ClipperLib;
 
-void Win32MainWindow::createRegions()
+Win32MainWindow::Win32MainWindow(const Vector2i &size, const std::string &caption, bool resizable, bool fullscreen, int colorBits, int alphaBits, int depthBits, int stencilBits, int nSamples, unsigned int glMajor, unsigned int glMinor)
+    : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples, glMajor, glMinor),
+      mThemeEx(nvgContext())
 {
-    mDrawSizingPaths = true;
+    //mDrawSizingPaths = true;
     mDrawHitTest = true;
 
+    ::nvgluCreateFramebuffer(nvgContext(), 16, 16,0);
+//    GLuint fbo;
+//    //::glGenFramebuffersEXT(1, &fbo);
+
+//    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo);
+//    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+//    ::glDeleteFramebuffersEXT(1, &fbo);
+
+    mHwnd = ::glfwGetWin32Window(glfwWindow());
+    loadResources();
+    createPaths();
+}
+
+ThemeEx *Win32MainWindow::themeex()
+{
+    return &mThemeEx;
+}
+
+Win32MainWindow::~Win32MainWindow()
+{
+    deletePaths();
+}
+
+bool Win32MainWindow::resizeEvent(const Vector2i &size)
+{
+    Screen::resizeEvent(size);
+    deletePaths();
+    createPaths();
+    return true;
+}
+
+bool Win32MainWindow::mouseMotionEvent(const Vector2i &p, const Vector2i &rel, int button, int modifiers)
+{
+    resizeHitTest(IntPoint(p.x(), p.y()));
+    //::UpdateWindow(mHwnd);
+    return true;
+}
+
+void Win32MainWindow::createPaths()
+{
     int width = size().x();
     int height = size().y();
 
@@ -97,7 +139,7 @@ void Win32MainWindow::createRegions()
     //::UpdateWindow(mHwnd);
 }
 
-void Win32MainWindow::deleteRegions()
+void Win32MainWindow::deletePaths()
 {
     if(mOuterRgn)
     {
@@ -207,6 +249,73 @@ void Win32MainWindow::draw(NVGcontext *ctx)
         drawPaths(mRightBottom, Color(127, 0, 0, 255));
         drawPaths(mRightTop, Color(0, 127, 0, 255));
     }
+
+    double  x, y;
+    ::glfwGetCursorPos(glfwWindow(), &x, &y);
+    if(mDrawHitTest)
+        resizeHitTest(IntPoint(static_cast<int>(x), static_cast<int>(y)));
+}
+
+void Win32MainWindow::loadResources()
+{
+    mArrowCursor = ::glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+    mHorCursor = ::glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR) ;
+    mVertCursor  = ::glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
+
+    //    sLeftTopCursor ;
+    //    sRightBottomCursor ;
+
+}
+
+bool Win32MainWindow::pointInPath(const IntPoint& point, const Paths& paths)
+{
+    for(auto path : paths)
+        if(ClipperLib::PointInPolygon(point, path))
+            return true;
+
+    return false;
+}
+
+bool Win32MainWindow::resizeHitTest(const IntPoint& point)
+{
+    if(pointInPath(point, mLeft))
+    {
+        if(mDrawHitTest)
+            drawPaths(mLeft, Color(255, 0, 0, 255));
+
+        ::glfwSetCursor(glfwWindow(), mHorCursor);
+        return true;
+    }
+
+    if(pointInPath(point, mRight))
+    {
+        if(mDrawHitTest)
+            drawPaths(mRight, Color(255, 0, 0, 255));
+
+        ::glfwSetCursor(glfwWindow(), mHorCursor);
+        return true;
+    }
+
+    if(pointInPath(point, mTop))
+    {
+        if(mDrawHitTest)
+            drawPaths(mTop, Color(255, 0, 0, 255));
+
+        ::glfwSetCursor(glfwWindow(), mVertCursor);
+        return true;
+    }
+
+    if(pointInPath(point, mBottom))
+    {
+        if(mDrawHitTest)
+            drawPaths(mBottom, Color(255, 0, 0, 255));
+
+        ::glfwSetCursor(glfwWindow(), mVertCursor);
+        return true;
+    }
+
+    ::glfwSetCursor(glfwWindow(), mArrowCursor);
+    return false;
 }
 
 }//namespace nanogui
