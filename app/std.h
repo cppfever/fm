@@ -9,8 +9,9 @@
 #include <memory>
 
 //GL
-#include <GL/glew.h>
-//#include <GL/gl.h>
+//#include <GL/glew.h>
+#include <GLAD/glad.h>
+
 
 //GLFW3
 #include <GLFW/glfw3.h>

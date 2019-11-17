@@ -11,11 +11,6 @@ MainWindow::MainWindow(const nanogui::Vector2i &size, const std::string &caption
     : Win32MainWindow(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples, glMajor, glMinor),
       BackImage<MainWindow>(this)
 {
-    ::glfwMakeContextCurrent(glfwWindow());
-
-    if(::glewInit() != GLEW_OK)
-        throw std::runtime_error("MainWindow: Glew initialization failed.");
-
     setBackground(Color(255, 255, 0, 255));
     setResizeCallback([&](nanogui::Vector2i)
     {
@@ -44,7 +39,11 @@ MainWindow::MainWindow(const nanogui::Vector2i &size, const std::string &caption
 }
 
 MainWindow::~MainWindow()
-{}
+{
+    mCaption->deleteBackImage();
+    mToolbar->deleteBackImage();
+    mStatusbar->deleteBackImage();
+}
 
 bool MainWindow::keyboardEvent(int key, int scancode, int action, int modifiers)
 {
@@ -59,8 +58,8 @@ bool MainWindow::keyboardEvent(int key, int scancode, int action, int modifiers)
 
 void MainWindow::draw(NVGcontext* ctx)
 {    
-    //drawBackImage(ctx);
-    //Screen::draw(ctx);
+    drawBackImage(ctx);
+    Screen::draw(ctx);
     Win32MainWindow::draw(ctx);
 }
 }//namespace nanogui
