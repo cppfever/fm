@@ -9,7 +9,7 @@ using namespace ClipperLib;
 Win32MainWindow::Win32MainWindow(const Vector2i &size, const std::string &caption, bool resizable, bool fullscreen, int colorBits, int alphaBits, int depthBits, int stencilBits, int nSamples, unsigned int glMajor, unsigned int glMinor)
     : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples, glMajor, glMinor),
       mThemeEx(nvgContext()),
-      mFbo(nvgContext(), 200, 200, NVG_IMAGE_NEAREST | NVG_IMAGE_FLIPY)
+      mFbo(nvgContext(), 200, 200, NVG_IMAGE_NEAREST)
 {
     mDrawSizingPaths = true;
     mDrawHitTest = true;
@@ -21,9 +21,9 @@ Win32MainWindow::Win32MainWindow(const Vector2i &size, const std::string &captio
     mFbo.setDrawCallback([&](NVGcontext* ctx)
     {
         ::nvgBeginPath(ctx);
-        //::nvgCircle(ctx, 100.0f, 100.f, 50.f);
+        ::nvgCircle(ctx, 100.0f, 100.f, 100.f);
         ::nvgMoveTo(ctx, 0.0f, 0.0f);
-        ::nvgLineTo(ctx, 100.0f, 100.f);
+        ::nvgLineTo(ctx, 200.0f, 200.f);
         ::nvgFillColor(ctx, Color(255, 0, 0, 255));
         ::nvgFill(ctx);
     });
@@ -245,9 +245,6 @@ void Win32MainWindow::drawContents()
 
 void Win32MainWindow::draw(NVGcontext *ctx)
 {
-    ::nvgSave(ctx);
-    ::glViewport(0, 0, width(), height());
-
     if(mDrawSizingPaths)
     {
         drawPaths(mSizing, Color(255, 0, 0, 255));
@@ -263,10 +260,9 @@ void Win32MainWindow::draw(NVGcontext *ctx)
 
     double  x, y;
     ::glfwGetCursorPos(glfwWindow(), &x, &y);
+
     if(mDrawHitTest)
         resizeHitTest(IntPoint(static_cast<int>(x), static_cast<int>(y)));
-
-    ::nvgRestore(ctx);
 }
 
 void Win32MainWindow::loadResources()

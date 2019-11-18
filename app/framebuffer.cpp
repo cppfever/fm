@@ -23,16 +23,14 @@ void Framebuffer::draw(NVGcontext* ctx)
     if(!mFbo)
         return;
 
-    //We must Save/Restore GL context when drawing in the framebuffer
-    ::nvgSave(ctx);
-
     int width, height;
     ::nvgImageSize(ctx, mFbo->image, &width, &height);
+
     ::nvgluBindFramebuffer(mFbo);
     ::nvgBeginFrame(ctx, width, height, 1.0f);
     ::glViewport(0, 0, width, height);
-    ::glClearColor(255, 0, 0, 255);
-    ::glClear(GL_COLOR_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+//    ::glClearColor(255, 0, 0, 255);
+//    ::glClear(GL_COLOR_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
 
     if(mDrawCallback)
         mDrawCallback(ctx);
@@ -40,10 +38,7 @@ void Framebuffer::draw(NVGcontext* ctx)
     ::nvgEndFrame(ctx);
     ::nvgluBindFramebuffer(nullptr);
 
-    ::nvgRestore(ctx);
-
-    NVGpaint img = ::nvgImagePattern(ctx, 0, 0, width, height, 0, mFbo->image, 1.0f);
-    //::nvgRoundedRect(ctx, 0,0, 250, 250, 20);
+    NVGpaint img = ::nvgImagePattern(ctx, 0.0f, 0.0f, width, height, 0.0f, mFbo->image, 1.0f);
     ::nvgFillPaint(ctx, img);
     ::nvgFill(ctx);
 }
