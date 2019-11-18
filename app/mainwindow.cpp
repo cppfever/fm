@@ -57,7 +57,8 @@ bool MainWindow::keyboardEvent(int key, int scancode, int action, int modifiers)
 }
 
 void MainWindow::draw(NVGcontext* ctx)
-{    
+{        
+    ::glViewport(0, 0, width(), height());
     drawBackImage(ctx);
     Screen::draw(ctx);
     Win32MainWindow::draw(ctx);

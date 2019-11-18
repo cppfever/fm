@@ -5,7 +5,7 @@
 
 namespace nanogui
 {
-Framebuffer::Framebuffer(NVGcontext* ctx, int width, int height, NVGimageFlags flags)
+Framebuffer::Framebuffer(NVGcontext* ctx, int width, int height, int flags)
 {
     mFbo = ::nvgluCreateFramebuffer(ctx, width, height, flags);
 
@@ -29,10 +29,10 @@ void Framebuffer::draw(NVGcontext* ctx)
     int width, height;
     ::nvgImageSize(ctx, mFbo->image, &width, &height);
     ::nvgluBindFramebuffer(mFbo);
-    ::glViewport(0, 0, width, height);
-    ::glClearColor(0, 0, 0, 0);
-    ::glClear(GL_COLOR_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
     ::nvgBeginFrame(ctx, width, height, 1.0f);
+    ::glViewport(0, 0, width, height);
+    ::glClearColor(255, 0, 0, 255);
+    ::glClear(GL_COLOR_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
 
     if(mDrawCallback)
         mDrawCallback(ctx);
@@ -41,6 +41,11 @@ void Framebuffer::draw(NVGcontext* ctx)
     ::nvgluBindFramebuffer(nullptr);
 
     ::nvgRestore(ctx);
+
+    NVGpaint img = ::nvgImagePattern(ctx, 0, 0, width, height, 0, mFbo->image, 1.0f);
+    //::nvgRoundedRect(ctx, 0,0, 250, 250, 20);
+    ::nvgFillPaint(ctx, img);
+    ::nvgFill(ctx);
 }
 
 void Framebuffer::setDrawCallback(const std::function<void(NVGcontext *ctx)>& callback)

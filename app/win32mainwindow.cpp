@@ -8,7 +8,8 @@ using namespace ClipperLib;
 
 Win32MainWindow::Win32MainWindow(const Vector2i &size, const std::string &caption, bool resizable, bool fullscreen, int colorBits, int alphaBits, int depthBits, int stencilBits, int nSamples, unsigned int glMajor, unsigned int glMinor)
     : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples, glMajor, glMinor),
-      mThemeEx(nvgContext()), mFbo(nvgContext(), 200, 200, NVG_IMAGE_NEAREST)
+      mThemeEx(nvgContext()),
+      mFbo(nvgContext(), 200, 200, NVG_IMAGE_NEAREST | NVG_IMAGE_FLIPY)
 {
     mDrawSizingPaths = true;
     mDrawHitTest = true;
@@ -19,12 +20,12 @@ Win32MainWindow::Win32MainWindow(const Vector2i &size, const std::string &captio
 
     mFbo.setDrawCallback([&](NVGcontext* ctx)
     {
-        ::nvgSave(ctx);
         ::nvgBeginPath(ctx);
-        ::nvgCircle(ctx, 50.0f, 50.f, 100.f);
-        ::nvgFillColor(ctx, Color(0, 255, 0, 255));
+        //::nvgCircle(ctx, 100.0f, 100.f, 50.f);
+        ::nvgMoveTo(ctx, 0.0f, 0.0f);
+        ::nvgLineTo(ctx, 100.0f, 100.f);
+        ::nvgFillColor(ctx, Color(255, 0, 0, 255));
         ::nvgFill(ctx);
-        ::nvgRestore(ctx);
     });
 }
 
@@ -237,17 +238,15 @@ void Win32MainWindow::drawPaths(Paths& paths, Color color)
     ::nvgFill(ctx);
 }
 
+void Win32MainWindow::drawContents()
+{
+    mFbo.draw(nvgContext());
+}
+
 void Win32MainWindow::draw(NVGcontext *ctx)
 {
-    //mFbo.draw(ctx);
-
-    NVGpaint img = ::nvgImagePattern(ctx, 0, 0, 100, 100, 0, mFbo.image(), 1.0f);
-
     ::nvgSave(ctx);
-    ::nvgBeginPath(ctx);
-    ::nvgRoundedRect(ctx, 0,0, 250, 250, 20);
-    ::nvgFillPaint(ctx, img);
-    ::nvgFill(ctx);
+    ::glViewport(0, 0, width(), height());
 
     if(mDrawSizingPaths)
     {

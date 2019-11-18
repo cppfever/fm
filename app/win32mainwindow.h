@@ -38,6 +38,7 @@ protected:
     void combinePaths(Paths& solution, Paths& subject, Paths& clip, ClipType op);
     void drawPath(Path& path);
     void drawPaths(Paths& paths, Color color);
+    void drawContents() override;
     void draw(NVGcontext* ctx) override;
 
     void loadResources();

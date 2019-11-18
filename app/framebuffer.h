@@ -12,7 +12,7 @@ class Framebuffer : public Object
 {
 public:
 
-    Framebuffer(NVGcontext* ctx, int width, int height, NVGimageFlags flags);
+    Framebuffer(NVGcontext* ctx, int width, int height, int flags);
     virtual ~Framebuffer();
 
     void draw(NVGcontext* ctx);
