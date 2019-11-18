@@ -239,13 +239,15 @@ void Win32MainWindow::drawPaths(Paths& paths, Color color)
 
 void Win32MainWindow::draw(NVGcontext *ctx)
 {
-    mFbo.draw(ctx);
+    //mFbo.draw(ctx);
 
     NVGpaint img = ::nvgImagePattern(ctx, 0, 0, 100, 100, 0, mFbo.image(), 1.0f);
-    nvgBeginPath(ctx);
-    nvgRoundedRect(ctx, 0,0, 250, 250, 20);
-    nvgFillPaint(ctx, img);
-    nvgFill(ctx);
+
+    ::nvgSave(ctx);
+    ::nvgBeginPath(ctx);
+    ::nvgRoundedRect(ctx, 0,0, 250, 250, 20);
+    ::nvgFillPaint(ctx, img);
+    ::nvgFill(ctx);
 
     if(mDrawSizingPaths)
     {
@@ -264,6 +266,8 @@ void Win32MainWindow::draw(NVGcontext *ctx)
     ::glfwGetCursorPos(glfwWindow(), &x, &y);
     if(mDrawHitTest)
         resizeHitTest(IntPoint(static_cast<int>(x), static_cast<int>(y)));
+
+    ::nvgRestore(ctx);
 }
 
 void Win32MainWindow::loadResources()

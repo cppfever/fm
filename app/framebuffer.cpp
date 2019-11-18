@@ -23,6 +23,9 @@ void Framebuffer::draw(NVGcontext* ctx)
     if(!mFbo)
         return;
 
+    //We must Save/Restore GL context when drawing in the framebuffer
+    ::nvgSave(ctx);
+
     int width, height;
     ::nvgImageSize(ctx, mFbo->image, &width, &height);
     ::nvgluBindFramebuffer(mFbo);
@@ -36,6 +39,8 @@ void Framebuffer::draw(NVGcontext* ctx)
 
     ::nvgEndFrame(ctx);
     ::nvgluBindFramebuffer(nullptr);
+
+    ::nvgRestore(ctx);
 }
 
 void Framebuffer::setDrawCallback(const std::function<void(NVGcontext *ctx)>& callback)
