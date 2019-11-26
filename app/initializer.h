@@ -3,7 +3,7 @@
 #include "common.h"
 
 
-namespace nanogui
+namespace fm
 {
 
 class Initializer
@@ -35,4 +35,4 @@ private:
     static inline bool sStatus {false};
 } __fm__initializer__;
 
-}//namespace nanogui
+}//namespace fm

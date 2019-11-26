@@ -1,15 +1,16 @@
 #include "mainwindow.h"
 
+using namespace nanogui;
 
-namespace nanogui
+namespace fm
 {
 MainWindow::MainWindow(const nanogui::Vector2i &size, const std::string &caption,
                        bool resizable, bool fullscreen, int colorBits,
                        int alphaBits, int depthBits, int stencilBits,
                        int nSamples,
                        unsigned int glMajor, unsigned int glMinor)
-    : Win32MainWindow(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples, glMajor, glMinor),
-      BackImage<MainWindow>(this)
+    : fm::Win32MainWindow(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples, glMajor, glMinor),
+      fm::BackImage<MainWindow>(this)
 {
     setBackground(Color(255, 255, 0, 255));
     setResizeCallback([&](nanogui::Vector2i)
@@ -25,9 +26,9 @@ MainWindow::MainWindow(const nanogui::Vector2i &size, const std::string &caption
     mBoxLayout = new BoxLayout(Orientation::Vertical, Alignment::Fill, 10, 10);
     this->setLayout(mBoxLayout);
 
-    mCaption = new Panel(this);
-    mToolbar = new Panel(this);
-    mStatusbar = new Panel(this);
+    mCaption = new fm::Panel(this);
+    mToolbar = new fm::Panel(this);
+    mStatusbar = new fm::Panel(this);
 
     mCaption->loadBackImage("icons/icon1.png");
     mToolbar->loadBackImage("icons/icon2.png");
@@ -60,6 +61,6 @@ void MainWindow::draw(NVGcontext* ctx)
 {        
     drawBackImage(ctx);
     Screen::draw(ctx);
-    Win32MainWindow::draw(ctx);
+    fm::Win32MainWindow::draw(ctx);
 }
-}//namespace nanogui
+}//namespace fm

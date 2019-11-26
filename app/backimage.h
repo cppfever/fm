@@ -4,7 +4,7 @@
 #include "themeex.h"
 
 
-namespace nanogui
+namespace fm
 {
 
 template<typename T>
@@ -83,4 +83,4 @@ private:
 
 };//class BackImage
 
-}//namespace nanogui
+}//namespace fm

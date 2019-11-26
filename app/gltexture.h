@@ -5,7 +5,7 @@
 #include <stb_image.h>
 
 
-namespace nanogui
+namespace fm
 {
 
 class GLTexture {
@@ -37,8 +37,8 @@ public:
 
     GLuint texture() const { return mTextureId; }
     const std::string& textureName() const { return mTextureName; }
-    Vector2i size() const { return Vector2i(mWidth, mHeight); }
-    Vector2f sizeF() const { return Vector2f(mWidth, mHeight); }
+    nanogui::Vector2i size() const { return nanogui::Vector2i(mWidth, mHeight); }
+    nanogui::Vector2f sizeF() const { return nanogui::Vector2f(mWidth, mHeight); }
 
     /**
     *  Load a file in memory and create an OpenGL texture.
@@ -80,4 +80,4 @@ private:
     int mHeight {0};
 };
 
-}//namespace nanogui
+}//namespace fm

@@ -5,6 +5,7 @@
 #include "initializer.h"
 #include "themeex.h"
 #include "framebuffer.h"
+#include "cursor.h"
 #include "gltexture.h"
 #include "backimage.h"
 #include "panel.h"

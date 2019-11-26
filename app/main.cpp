@@ -6,7 +6,7 @@ int main(int /* argc */, char ** /* argv */)
 {
     try
     {
-            auto mainwindow = MainWindow(Vector2i(800, 600), "FM");
+            auto mainwindow = fm::MainWindow(Vector2i(800, 600), "FM");
             ::glfwSetWindowPos(mainwindow.glfwWindow(), 300, 300);
             mainwindow.setVisible(true);
             mainwindow.performLayout();
@@ -18,7 +18,7 @@ int main(int /* argc */, char ** /* argv */)
         std::cerr << error_msg << std::endl;
         return -1;
     }
-    catch (const nanogui::Exception& e)
+    catch (const fm::Exception& e)
     {
         e.Print();
         return -2;

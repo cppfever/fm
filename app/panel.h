@@ -5,24 +5,24 @@
 #include "themeex.h"
 
 
-namespace nanogui
+namespace fm
 {
 
-class Panel : public Widget, public BackImage<Panel>
+class Panel : public nanogui::Widget, public fm::BackImage<fm::Panel>
 {
 public:
 
-    Panel(Widget *parent);
+    Panel(nanogui::Widget *parent);
     ~Panel();
 
     void draw(NVGcontext *ctx) override;
-    bool mouseEnterEvent(const Vector2i &p, bool enter) override;
-    ThemeEx* themeex();
+    bool mouseEnterEvent(const nanogui::Vector2i &p, bool enter) override;
+    fm::ThemeEx* themeex();
 
 protected:
 
-    ThemeEx* mThemeEx {nullptr};
+    fm::ThemeEx* mThemeEx {nullptr};
 
 };//class Panel
 
-}//namespace nanogui
+}//namespace fm

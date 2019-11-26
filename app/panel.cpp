@@ -1,8 +1,9 @@
+#include "exception.h"
 #include "panel.h"
 #include "mainwindow.h"
 
 
-namespace nanogui
+namespace fm
 {
 Panel::Panel(Widget *parent) : Widget(parent), BackImage<Panel>(this)
 {
@@ -12,7 +13,7 @@ Panel::Panel(Widget *parent) : Widget(parent), BackImage<Panel>(this)
         if(Panel* panel = dynamic_cast<Panel*>(parent))
             mThemeEx = panel->themeex();
         else
-            throw std::runtime_error("Panel: panel parent must be MainWindow or Panel.");
+            throw ExceptionInfo << "Panel: panel parent must be MainWindow or Panel.";
 
     setFontSize(theme()->mStandardFontSize);
     setHeight(mFontSize + 2 * themeex()->WidgetPadding);
@@ -27,7 +28,7 @@ void Panel::draw(NVGcontext *ctx)
     drawBackImage(ctx);
 }
 
-bool Panel::mouseEnterEvent(const Vector2i &p, bool enter)
+bool Panel::mouseEnterEvent(const nanogui::Vector2i &p, bool enter)
 {
     if(enter)
         screen()->setCaption("ok");
@@ -42,4 +43,4 @@ ThemeEx* Panel::themeex()
     return mThemeEx;
 }
 
-}//namespace nanogui
+}//namespace fm

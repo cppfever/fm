@@ -1,15 +1,16 @@
 #include "win32mainwindow.h"
 
+using namespace nanogui;
+using namespace clipper;
 
-namespace nanogui
+
+namespace fm
 {
 
-using namespace ClipperLib;
-
-Win32MainWindow::Win32MainWindow(const Vector2i &size, const std::string &caption, bool resizable, bool fullscreen, int colorBits, int alphaBits, int depthBits, int stencilBits, int nSamples, unsigned int glMajor, unsigned int glMinor)
+Win32MainWindow::Win32MainWindow(const nanogui::Vector2i &size, const std::string &caption, bool resizable, bool fullscreen, int colorBits, int alphaBits, int depthBits, int stencilBits, int nSamples, unsigned int glMajor, unsigned int glMinor)
     : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples, glMajor, glMinor),
-      mThemeEx(nvgContext()),
-      mFbo(nvgContext(), 200, 200, NVG_IMAGE_NEAREST)
+      mFbo(nvgContext(), 200, 200, NVG_IMAGE_NEAREST),
+      mCursor(nvgContext())
 {
     mDrawSizingPaths = true;
     mDrawHitTest = true;
@@ -24,6 +25,19 @@ Win32MainWindow::Win32MainWindow(const Vector2i &size, const std::string &captio
         ::nvgCircle(ctx, 100.0f, 100.f, 100.f);
         ::nvgMoveTo(ctx, 0.0f, 0.0f);
         ::nvgLineTo(ctx, 200.0f, 200.f);
+        ::nvgFillColor(ctx, Color(255, 0, 0, 255));
+        ::nvgFill(ctx);
+    });
+
+    mCursor.setDrawCallback([&](NVGcontext* ctx)
+    {
+        auto s = mCursor.size();
+        auto width = s[0];
+        auto height = s[1];
+        ::nvgBeginPath(ctx);
+        ::nvgCircle(ctx, width/2, height/2, width);
+        ::nvgMoveTo(ctx, 0.0f, 0.0f);
+        ::nvgLineTo(ctx, width, height);
         ::nvgFillColor(ctx, Color(255, 0, 0, 255));
         ::nvgFill(ctx);
     });
@@ -59,11 +73,11 @@ void Win32MainWindow::createPaths()
     int width = size().x();
     int height = size().y();
 
-    int xthick = themeex()->MainWindowResizeThickness;
-    int ythick = themeex()->MainWindowResizeThickness;
+    int xthick = themeex()->MainWindowResizeWidth;
+    int ythick = themeex()->MainWindowResizeWidth;
 
-    int xresize = themeex()->MainWindowResizeSize;
-    int yresize = themeex()->MainWindowResizeSize;
+    int xresize = themeex()->MainWindowCornerResizeWidth;
+    int yresize = themeex()->MainWindowCornerResizeWidth;
 
     if(3 * xthick > width)
         xthick = width / 3;
@@ -167,7 +181,7 @@ void Win32MainWindow::deletePaths()
     mRightTop.clear();
 }
 
-void Win32MainWindow::combinePaths(Paths& solution, Paths& subject, Paths& clip, ClipType op)
+void Win32MainWindow::combinePaths(clipper::Paths& solution, clipper::Paths& subject, clipper::Paths& clip, clipper::ClipType op)
 {
     mClipper.Clear();
     mClipper.AddPaths(subject, ptSubject, true);
@@ -175,10 +189,10 @@ void Win32MainWindow::combinePaths(Paths& solution, Paths& subject, Paths& clip,
     mClipper.Execute(op, solution, pftEvenOdd);
 }
 
-void Win32MainWindow::createCornerPath(Paths& solution, Paths& diff1, Paths& diff2,
+void Win32MainWindow::createCornerPath(clipper::Paths& solution, clipper::Paths& diff1, clipper::Paths& diff2,
                                        int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, int x5, int y5)
 {
-    Path path;
+    clipper::Path path;
 
     path << IntPoint(x0, y0)
          << IntPoint(x1, y1)
@@ -187,11 +201,11 @@ void Win32MainWindow::createCornerPath(Paths& solution, Paths& diff1, Paths& dif
          << IntPoint(x4, y4)
          << IntPoint(x5, y5);
 
-    Paths paths;
+    clipper::Paths paths;
     paths << path;
 
-    Paths diffsolutuion1;
-    Paths diffsolutuion2;
+    clipper::Paths diffsolutuion1;
+    clipper::Paths diffsolutuion2;
 
     combinePaths(diffsolutuion1, paths, diff1, ctDifference);
     combinePaths(diffsolutuion2, diffsolutuion1, diff2, ctDifference);
@@ -199,9 +213,9 @@ void Win32MainWindow::createCornerPath(Paths& solution, Paths& diff1, Paths& dif
     combinePaths(solution, mSizing, diffsolutuion2, ctIntersection);
 }
 
-void Win32MainWindow::createSidePath(Paths& solution, int x0, int y0, int x1, int y1)
+void Win32MainWindow::createSidePath(clipper::Paths& solution, int x0, int y0, int x1, int y1)
 {
-    Path path;
+    clipper::Path path;
 
     path << IntPoint(x0, y0)
          << IntPoint(x0, y1)
@@ -214,7 +228,7 @@ void Win32MainWindow::createSidePath(Paths& solution, int x0, int y0, int x1, in
     mClipper.Execute(ctIntersection, solution, pftEvenOdd);
 }
 
-void Win32MainWindow::drawPath(Path& path)
+void Win32MainWindow::drawPath(clipper::Path& path)
 {
     NVGcontext* ctx = nvgContext();
 
@@ -223,7 +237,7 @@ void Win32MainWindow::drawPath(Path& path)
         ::nvgLineTo(ctx, path[i].X, path[i].Y);
 }
 
-void Win32MainWindow::drawPaths(Paths& paths, Color color)
+void Win32MainWindow::drawPaths(clipper::Paths& paths, Color color)
 {
     NVGcontext* ctx = nvgContext();
     ::nvgBeginPath(ctx);
@@ -240,7 +254,7 @@ void Win32MainWindow::drawPaths(Paths& paths, Color color)
 
 void Win32MainWindow::drawContents()
 {
-    mFbo.draw(nvgContext());
+    mFbo.draw();
 }
 
 void Win32MainWindow::draw(NVGcontext *ctx)
@@ -276,16 +290,16 @@ void Win32MainWindow::loadResources()
 
 }
 
-bool Win32MainWindow::pointInPath(const IntPoint& point, const Paths& paths)
+bool Win32MainWindow::pointInPath(const clipper::IntPoint& point, const clipper::Paths& paths)
 {
     for(auto path : paths)
-        if(ClipperLib::PointInPolygon(point, path))
+        if(clipper::PointInPolygon(point, path))
             return true;
 
     return false;
 }
 
-bool Win32MainWindow::resizeHitTest(const IntPoint& point)
+bool Win32MainWindow::resizeHitTest(const clipper::IntPoint& point)
 {
     if(pointInPath(point, mLeft))
     {
@@ -328,7 +342,7 @@ bool Win32MainWindow::resizeHitTest(const IntPoint& point)
         if(mDrawHitTest)
             drawPaths(mLeftTop, Color(255, 0, 0, 255));
 
-        ::glfwSetCursor(glfwWindow(), mVertCursor);
+        ::glfwSetCursor(glfwWindow(), mCursor.glfwCursor());
         return true;
     }
 
@@ -363,4 +377,4 @@ bool Win32MainWindow::resizeHitTest(const IntPoint& point)
     return false;
 }
 
-}//namespace nanogui
+}//namespace fm

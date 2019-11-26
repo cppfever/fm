@@ -7,10 +7,10 @@
 #include "panel.h"
 
 
-namespace nanogui
+namespace fm
 {
 
-class MainWindow : public Win32MainWindow, public BackImage<MainWindow>
+class MainWindow : public fm::Win32MainWindow, public fm::BackImage<fm::MainWindow>
 {
 public:
 
@@ -26,10 +26,10 @@ public:
 
 private:
 
-    BoxLayout* mBoxLayout {nullptr};
-    Panel* mCaption {nullptr};
-    Panel* mToolbar {nullptr};
-    Panel* mStatusbar {nullptr};    
+    nanogui::BoxLayout* mBoxLayout {nullptr};
+    fm::Panel* mCaption {nullptr};
+    fm::Panel* mToolbar {nullptr};
+    fm::Panel* mStatusbar {nullptr};
 };
 
-}//namespace nanogui
+}//namespace fm

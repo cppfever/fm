@@ -1,32 +1,28 @@
 #pragma once
 
 #include "common.h"
-#include "exception.h"
 #include <nanovg_gl_utils.h>
 
 
-namespace nanogui
+namespace fm
 {
 
-class Framebuffer : public Object
+class Framebuffer : public nanogui::Object
 {
 public:
 
     Framebuffer(NVGcontext* ctx, int width, int height, int flags);
     virtual ~Framebuffer();
 
-    void draw(NVGcontext* ctx);
+    void draw();
     void setDrawCallback(const std::function<void(NVGcontext *ctx)>& callback);
-
-    int image()
-    {
-        return mFbo->image;
-    }
+    nanogui::Vector2i size();
 
 protected:
 
+    NVGcontext* mVG {nullptr};
     NVGLUframebuffer* mFbo {nullptr};
     std::function<void(NVGcontext *ctx)> mDrawCallback;
 };//class Panel
 
-}//namespace nanogui
+}//namespace fm

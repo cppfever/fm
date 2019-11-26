@@ -3,7 +3,7 @@
 #include "common.h"
 
 
-namespace nanogui
+namespace fm
 {
 
 class FilePanel : public Panel
@@ -23,4 +23,4 @@ protected:
 
 };//class FilePanel
 
-}//namespace nanogui
+}//namespace fm

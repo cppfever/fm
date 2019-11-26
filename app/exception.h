@@ -3,7 +3,7 @@
 #include "common.h"
 
 
-namespace nanogui
+namespace fm
 {
 /**
     This one class uses for all exceptions.
@@ -263,8 +263,8 @@ protected:
         ...
     }
 */
-#define ExceptionInfo nanogui::Exception("", __FILE__, __LINE__, __func__)
+#define ExceptionInfo Exception("", __FILE__, __LINE__, __func__)
 
 
-}//namespace nanogui
+}//namespace fm
 

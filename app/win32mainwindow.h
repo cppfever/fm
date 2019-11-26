@@ -3,15 +3,12 @@
 #include "common.h"
 #include "themeex.h"
 #include "framebuffer.h"
+#include "cursor.h"
 
-
-namespace nanogui
+namespace fm
 {
 
-using namespace ClipperLib;
-
-
-class Win32MainWindow : public Screen
+class Win32MainWindow : public nanogui::Screen
 {
 public:
 
@@ -24,40 +21,42 @@ public:
     ~Win32MainWindow();
 
     ThemeEx* themeex();
-    bool resizeEvent(const Vector2i &size) override;
-    bool mouseMotionEvent(const Vector2i &p, const Vector2i &rel, int button, int modifiers) override;
+    bool resizeEvent(const nanogui::Vector2i &size) override;
+    bool mouseMotionEvent(const nanogui::Vector2i &p, const nanogui::Vector2i &rel, int button, int modifiers) override;
 
 protected:    
 
     virtual void createPaths();
     virtual void deletePaths();
-    void createSidePath(Paths& solution, int x0, int y0, int x1, int y1);
-    void createCornerPath(Paths& solution, Paths& diff1, Paths& diff2, int x0, int y0, int x1, int y1, int x2, int y2,
-                           int x3, int y3, int x4, int y4, int x5, int y5);
+    void createSidePath(clipper::Paths& solution, int x0, int y0, int x1, int y1);
+    void createCornerPath(clipper::Paths& solution, clipper::Paths& diff1, clipper::Paths& diff2,
+                          int x0, int y0, int x1, int y1, int x2, int y2,
+                          int x3, int y3, int x4, int y4, int x5, int y5);
 
-    void combinePaths(Paths& solution, Paths& subject, Paths& clip, ClipType op);
-    void drawPath(Path& path);
-    void drawPaths(Paths& paths, Color color);
+    void combinePaths(clipper::Paths& solution, clipper::Paths& subject, clipper::Paths& clip, clipper::ClipType op);
+    void drawPath(clipper::Path& path);
+    void drawPaths(clipper::Paths& paths, nanogui::Color color);
     void drawContents() override;
     void draw(NVGcontext* ctx) override;
 
     void loadResources();
-    bool pointInPath(const IntPoint& p, const Paths& paths);
-    virtual bool resizeHitTest(const IntPoint& p);
+    bool pointInPath(const clipper::IntPoint& p, const clipper::Paths& paths);
+    virtual bool resizeHitTest(const clipper::IntPoint& p);
 
     HWND mHwnd {nullptr};
     HRGN mOuterRgn {nullptr};
 
-    ThemeEx mThemeEx;
-    Clipper mClipper;
-    Paths mSizing,
+    fm::ThemeEx mThemeEx;
+    clipper::Clipper mClipper;
+    clipper::Paths mSizing,
     mOuter, mInner,
     mLeft, mTop, mRight, mBottom,
     mLeftTop, mRightTop, mLeftBottom, mRightBottom;
     bool mDrawSizingPaths {false};
     bool mDrawHitTest {false};
 
-    Framebuffer mFbo;
+    fm::Cursor mCursor;
+    fm::Framebuffer mFbo;
     GLFWcursor* mArrowCursor {nullptr};
     GLFWcursor* mHorCursor {nullptr};
     GLFWcursor* mVertCursor {nullptr};
@@ -66,4 +65,4 @@ protected:
 
 };//class Win32MainWindow
 
-}//namespace nanogui
+}//namespace fm
