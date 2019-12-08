@@ -4,6 +4,3 @@
 [submodule "ext/clipper"]
 	path = ext/clipper
 	url = https://github.com/vgui/clipper.git
-[submodule "antigrain"]
-	path = antigrain
-	url = https://github.com/vgui/antigrain.git
