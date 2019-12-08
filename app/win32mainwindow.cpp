@@ -35,7 +35,7 @@ Win32MainWindow::Win32MainWindow(const nanogui::Vector2i &size, const std::strin
         auto width = s[0];
         auto height = s[1];
         ::nvgBeginPath(ctx);
-        ::nvgCircle(ctx, width/2, height/2, width);
+        ::nvgCircle(ctx, width/2, height/2, width/2);
         ::nvgMoveTo(ctx, 0.0f, 0.0f);
         ::nvgLineTo(ctx, width, height);
         ::nvgFillColor(ctx, Color(255, 0, 0, 255));
@@ -254,7 +254,8 @@ void Win32MainWindow::drawPaths(clipper::Paths& paths, Color color)
 
 void Win32MainWindow::drawContents()
 {
-    mFbo.draw();
+    //mFbo.draw();
+    mCursor.draw();
 }
 
 void Win32MainWindow::draw(NVGcontext *ctx)
@@ -272,11 +273,12 @@ void Win32MainWindow::draw(NVGcontext *ctx)
         drawPaths(mRightTop, Color(0, 127, 0, 255));
     }
 
-    double  x, y;
-    ::glfwGetCursorPos(glfwWindow(), &x, &y);
-
-    if(mDrawHitTest)
+    //if(mDrawHitTest)
+    {
+        double  x, y;
+        ::glfwGetCursorPos(glfwWindow(), &x, &y);
         resizeHitTest(IntPoint(static_cast<int>(x), static_cast<int>(y)));
+    }
 }
 
 void Win32MainWindow::loadResources()

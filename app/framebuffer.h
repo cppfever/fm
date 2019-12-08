@@ -14,7 +14,7 @@ public:
     Framebuffer(NVGcontext* ctx, int width, int height, int flags);
     virtual ~Framebuffer();
 
-    void draw();
+    virtual void draw();
     void setDrawCallback(const std::function<void(NVGcontext *ctx)>& callback);
     nanogui::Vector2i size();
 
