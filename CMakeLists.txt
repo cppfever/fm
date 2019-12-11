@@ -38,9 +38,13 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${FM_BINARY_DIR})
 
 #include_directories(ext/clipper/cpp)
 
+#add_subdirectory(ext/antigrain/agg-2.4)
+
 include_directories(ext/nanogui/ext/eigen)
 include_directories(ext/nanogui/ext/glad/include)
 include_directories(ext/nanogui/ext/nanovg/src)
+include_directories(ext/antigrain/agg-2.4/include)
+include_directories(ext/antigrain/agg-2.4/src)
 
 # Copy icons for an application
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons DESTINATION ${FM_BINARY_DIR})
