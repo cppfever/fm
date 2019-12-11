@@ -1,16 +1,4 @@
-#include <agg_basics.h>
-#include <agg_rendering_buffer.h>
-#include <agg_rasterizer_scanline_aa.h>
-#include <agg_scanline_u.h>
-#include <agg_renderer_scanline.h>
-#include <agg_pixfmt_rgba.h>
-#include <agg_path_storage.h>
-#include <agg_conv_stroke.h>
-#include <agg_vcgen_stroke.cpp>
-//#include "platform/agg_platform_support.h"
-//#include "ctrl/agg_slider_ctrl.h"
-//#include "ctrl/agg_cbox_ctrl.h"
-
+#include "agg.h"
 #include "win32mainwindow.h"
 
 
@@ -42,20 +30,8 @@ Win32MainWindow::Win32MainWindow(const nanogui::Vector2i &size, const std::strin
         ::nvgFill(ctx);
     });
 
-    mCursor.setDrawCallback([&](unsigned char* buffer, int width, int height)
+    mCursor.setDrawCallback([&](agg::rasterizer_scanline_aa<>& ras, int width, int height)
     {
-        using pixfmt = agg::pixfmt_rgba32;
-        using ren_base = agg::renderer_base<pixfmt>;
-
-        agg::rendering_buffer rbuffer(buffer, width, height, pixfmt::pix_width * width);
-        agg::pixfmt_rgba32 pixf(rbuffer);
-        ren_base ren(pixf);
-        agg::scanline_u8 sl;
-        agg::rasterizer_scanline_aa<> ras;
-
-        ren.clear(agg::rgba(0.0, 0.0, 0.0, 0.01));
-        ras.gamma(agg::gamma_none());
-
         agg::path_storage ps;
         agg::conv_stroke<agg::path_storage> pg(ps);
         pg.width(2.0);
@@ -67,7 +43,7 @@ Win32MainWindow::Win32MainWindow(const nanogui::Vector2i &size, const std::strin
         ps.line_to(width/2, 0);
         ps.close_polygon();
         ras.add_path(pg);
-        agg::render_scanlines_aa_solid(ras, sl, ren, agg::rgba8(255, 255, 255, 255));
+
     });
     mCursor.create();
 }
