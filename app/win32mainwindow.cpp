@@ -11,7 +11,7 @@ namespace fm
 
 Win32MainWindow::Win32MainWindow(const nanogui::Vector2i &size, const std::string &caption, bool resizable, bool fullscreen, int colorBits, int alphaBits, int depthBits, int stencilBits, int nSamples, unsigned int glMajor, unsigned int glMinor)
     : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples, glMajor, glMinor),
-      mFbo(nvgContext(), 200, 200, NVG_IMAGE_NEAREST)
+      mLeftTopCursor(CursorType::WestEast)
 {
     mDrawSizingPaths = true;
     mDrawHitTest = true;
@@ -19,33 +19,6 @@ Win32MainWindow::Win32MainWindow(const nanogui::Vector2i &size, const std::strin
     mHwnd = ::glfwGetWin32Window(glfwWindow());
     loadResources();
     createPaths();
-
-    mFbo.setDrawCallback([&](NVGcontext* ctx)
-    {
-        ::nvgBeginPath(ctx);
-        ::nvgCircle(ctx, 100.0f, 100.f, 100.f);
-        ::nvgMoveTo(ctx, 0.0f, 0.0f);
-        ::nvgLineTo(ctx, 200.0f, 200.f);
-        ::nvgFillColor(ctx, Color(255, 0, 0, 255));
-        ::nvgFill(ctx);
-    });
-
-    mCursor.setDrawCallback([&](agg::rasterizer_scanline_aa<>& ras, int width, int height)
-    {
-        agg::path_storage ps;
-        agg::conv_stroke<agg::path_storage> pg(ps);
-        pg.width(2.0);
-
-        ps.remove_all();
-        ps.move_to(0, height/2);
-        ps.line_to(width/2, height);
-        ps.line_to(width, height/2);
-        ps.line_to(width/2, 0);
-        ps.close_polygon();
-        ras.add_path(pg);
-
-    });
-    mCursor.create();
 }
 
 ThemeEx *Win32MainWindow::themeex()
@@ -347,7 +320,7 @@ bool Win32MainWindow::resizeHitTest(const clipper::IntPoint& point)
         if(mDrawHitTest)
             drawPaths(mLeftTop, Color(255, 0, 0, 255));
 
-        ::glfwSetCursor(glfwWindow(), mCursor.glfwCursor());
+        ::glfwSetCursor(glfwWindow(), mLeftTopCursor.glfwCursor());
         return true;
     }
 
@@ -365,7 +338,7 @@ bool Win32MainWindow::resizeHitTest(const clipper::IntPoint& point)
         if(mDrawHitTest)
             drawPaths(mRightBottom, Color(255, 0, 0, 255));
 
-        ::glfwSetCursor(glfwWindow(), mVertCursor);
+        ::glfwSetCursor(glfwWindow(), mLeftTopCursor.glfwCursor());
         return true;
     }
 

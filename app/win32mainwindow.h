@@ -55,13 +55,11 @@ protected:
     bool mDrawSizingPaths {false};
     bool mDrawHitTest {false};
 
-    fm::Cursor mCursor;
-    fm::Framebuffer mFbo;
     GLFWcursor* mArrowCursor {nullptr};
     GLFWcursor* mHorCursor {nullptr};
     GLFWcursor* mVertCursor {nullptr};
-    GLFWcursor* mLeftTopCursor {nullptr};
-    GLFWcursor* mRightBottomCursor {nullptr};
+    fm::CustomCursor mLeftTopCursor;
+    GLFWcursor* mRightTopCursor {nullptr};
 
 };//class Win32MainWindow
 
