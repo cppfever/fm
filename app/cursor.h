@@ -120,7 +120,7 @@ public:
         create(type, width, height);
     }
 
-    CustomCursor(std::function<void(agg::rasterizer_scanline_aa<>&, int, int)> drawcallback,
+    CustomCursor(std::function<void(agg::renderer_base<agg::pixfmt_rgba32>&, int, int)> drawcallback,
                 int width = ThemeEx::Default.CursorWidth,
                 int height = ThemeEx::Default.CursorHeight)
     {
@@ -142,7 +142,7 @@ public:
         }
     }
 
-    void create(std::function<void(agg::rasterizer_scanline_aa<>&, int, int)> drawcallback,
+    void create(std::function<void(agg::renderer_base<agg::pixfmt_rgba32>&, int, int)> drawcallback,
                 int width = ThemeEx::Default.CursorWidth,
                 int height = ThemeEx::Default.CursorHeight)
     {
@@ -156,24 +156,60 @@ public:
     {
         destroy();
 
+        static agg::path_storage nordsouth;
+        nordsouth.move_to(0.5, 0.0);
+        nordsouth.line_to(0.7, 0.2);
+        nordsouth.line_to(0.55, 0.2);
+        nordsouth.line_to(0.55, 0.8);
+        nordsouth.line_to(0.7, 0.8);
+        nordsouth.line_to(0.5, 1.0);
+        nordsouth.line_to(0.3, 0.8);
+        nordsouth.line_to(0.45, 0.8);
+        nordsouth.line_to(0.45, 0.2);
+        nordsouth.line_to(0.3, 0.2);
+        nordsouth.close_polygon();
+
+
         if(type <= CursorType::Standard)
             throw fm::ExceptionInfo << "FM: Invalid custom cursor type.";
         else if(type == CursorType::WestEast)
         {
-            mDrawCallback = [&](agg::rasterizer_scanline_aa<>& ras, int width, int height)
+            mDrawCallback = [&](agg::renderer_base<agg::pixfmt_rgba32>& ren, int width, int height)
             {
-                agg::path_storage ps;
-                agg::conv_stroke<agg::path_storage> pg(ps);
-                pg.width(4.0);
+//                agg::path_storage ps;
+//                ps.remove_all();
+//                ps.move_to(0.5, 0.0);
+//                ps.line_to(0.7, 0.2);
+//                ps.line_to(0.55, 0.2);
+//                ps.line_to(0.55, 0.8);
+//                ps.line_to(0.7, 0.8);
+//                ps.line_to(0.5, 1.0);
+//                ps.line_to(0.3, 0.8);
+//                ps.line_to(0.45, 0.8);
+//                ps.line_to(0.45, 0.2);
+//                ps.line_to(0.3, 0.2);
+//                ps.close_polygon();
 
-                ps.remove_all();
-                ps.move_to(0, height/2);
-                ps.line_to(width/2, height);
-                ps.line_to(width, height/2);
-                ps.line_to(width/2, 0);
-                ps.close_polygon();
-                ras.add_path(pg);
+                agg::conv_stroke<agg::path_storage> pg(nordsouth);
+                pg.width(0.03);
 
+                agg::trans_affine matrix;
+                //matrix.rotate(45.0 * M_PI / 180.0);
+                //matrix.translate(0.5, -0.25);
+                matrix.scale(width, height);
+
+
+                agg::conv_transform<agg::path_storage> tpath(nordsouth,matrix);
+                agg::conv_transform<agg::conv_stroke<agg::path_storage>> tstroke(pg,matrix);
+
+                agg::scanline_u8 sl;
+                agg::rasterizer_scanline_aa<> ras;
+                ren.clear(agg::rgba(0.0, 0.5, 0.0, 1.00));
+
+                ras.add_path(tpath);
+                agg::render_scanlines_aa_solid(ras, sl, ren, agg::rgba8(255, 255, 255, 255));
+                ras.add_path(tstroke);
+                agg::render_scanlines_aa_solid(ras, sl, ren, agg::rgba8(0, 0, 0, 255));
             };
         }
         else if(type == CursorType::NordSouth)
@@ -204,9 +240,7 @@ private:
     void create(int width,int height)
     {
         std::vector<unsigned char> buffer;
-        //buffer.resize(mWidth * mHeight * 4);
-        buffer.resize(20000);
-        std::cout << &buffer[0] << std::endl;
+        buffer.resize(mWidth * mHeight * 4);
 
         if(!mDrawCallback)
             throw fm::ExceptionInfo << "FM: Empty cursor.";
@@ -217,14 +251,7 @@ private:
         agg::rendering_buffer rbuffer(&buffer[0], mWidth, mHeight, pixfmt::pix_width * mWidth);
         agg::pixfmt_rgba32 pixf(rbuffer);
         ren_base ren(pixf);
-        agg::scanline_u8 sl;
-        agg::rasterizer_scanline_aa<> ras;
-        ren.clear(agg::rgba(0.0, 0.0, 0.0, 0.01));
-        ras.gamma(agg::gamma_none());
-
-        mDrawCallback(ras, mWidth, mHeight);
-
-        agg::render_scanlines_aa_solid(ras, sl, ren, agg::rgba8(255, 255, 255, 255));
+        mDrawCallback(ren, mWidth, mHeight);
 
         GLFWimage image;
         image.width = mWidth;
@@ -238,9 +265,7 @@ protected:
 
     int mWidth {0};
     int mHeight {0};
-    std::function<void(agg::rasterizer_scanline_aa<>&, int, int)> mDrawCallback;
-
-
+    std::function<void(agg::renderer_base<agg::pixfmt_rgba32>&, int, int)> mDrawCallback;
 };//class CustomCursor
 
 }//namespace fm

@@ -9,3 +9,4 @@
 #include <agg_path_storage.h>
 #include <agg_conv_stroke.h>
 #include <agg_vcgen_stroke.cpp>
+#include <agg_trans_affine.cpp>
