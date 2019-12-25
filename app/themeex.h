@@ -22,8 +22,8 @@ public:
     {
         MainWindowResizeWidth = ::GetSystemMetrics(SM_CXFRAME);
         MainWindowCornerResizeWidth = 3 * MainWindowResizeWidth;
-        CursorWidth = ::GetSystemMetrics(SM_CXCURSOR);
-        CursorHeight = ::GetSystemMetrics(SM_CYCURSOR);
+        CursorWidth = 24;//::GetSystemMetrics(SM_CXCURSOR);
+        CursorHeight = 24;//::GetSystemMetrics(SM_CYCURSOR);
         IconWidth = ::GetSystemMetrics(SM_CXICON);
         IconHeight = ::GetSystemMetrics(SM_CYICON);
     }
@@ -45,6 +45,8 @@ public:
     std::uint32_t CursorHeight;
     std::uint32_t IconWidth;
     std::uint32_t IconHeight;
+
+    std::uint32_t DefaultFontSize;
 
     static const ThemeEx Default;
 };//class ThemeEx

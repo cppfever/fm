@@ -11,10 +11,14 @@ namespace fm
 
 Win32MainWindow::Win32MainWindow(const nanogui::Vector2i &size, const std::string &caption, bool resizable, bool fullscreen, int colorBits, int alphaBits, int depthBits, int stencilBits, int nSamples, unsigned int glMajor, unsigned int glMinor)
     : nanogui::Screen(size, caption, resizable, fullscreen, colorBits, alphaBits, depthBits, stencilBits, nSamples, glMajor, glMinor),
-      mLeftTopCursor(CursorType::WestEast)
+      mArrowCursor(CursorType::Arrow),
+      mLeftRightCursor(CursorType::WestEast),
+      mTopBottomCursor(CursorType::NordSouth),
+      mLeftTopCursor(CursorType::NordWest),
+      mRightTopCursor(CursorType::NordEast)
 {
-    mDrawSizingPaths = true;
-    mDrawHitTest = true;
+    mDrawSizingPaths = false;
+    mDrawHitTest = false;
 
     mHwnd = ::glfwGetWin32Window(glfwWindow());
     loadResources();
@@ -128,10 +132,6 @@ void Win32MainWindow::createPaths()
                      width, yresize);
 
     mClipper.Clear();
-
-
-    //::SetWindowRgn(mHwnd, mOuterRgn, TRUE);
-    //::UpdateWindow(mHwnd);
 }
 
 void Win32MainWindow::deletePaths()
@@ -249,7 +249,7 @@ void Win32MainWindow::draw(NVGcontext *ctx)
         drawPaths(mRightTop, Color(0, 127, 0, 255));
     }
 
-    //if(mDrawHitTest)
+    if(mDrawHitTest)
     {
         double  x, y;
         ::glfwGetCursorPos(glfwWindow(), &x, &y);
@@ -259,13 +259,6 @@ void Win32MainWindow::draw(NVGcontext *ctx)
 
 void Win32MainWindow::loadResources()
 {
-    mArrowCursor = ::glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
-    mHorCursor = ::glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR) ;
-    mVertCursor  = ::glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
-
-    //    sLeftTopCursor ;
-    //    sRightBottomCursor ;
-
 }
 
 bool Win32MainWindow::pointInPath(const clipper::IntPoint& point, const clipper::Paths& paths)
@@ -284,7 +277,7 @@ bool Win32MainWindow::resizeHitTest(const clipper::IntPoint& point)
         if(mDrawHitTest)
             drawPaths(mLeft, Color(255, 0, 0, 255));
 
-        ::glfwSetCursor(glfwWindow(), mHorCursor);
+        ::glfwSetCursor(glfwWindow(), mLeftRightCursor.glfwCursor());
         return true;
     }
 
@@ -293,7 +286,7 @@ bool Win32MainWindow::resizeHitTest(const clipper::IntPoint& point)
         if(mDrawHitTest)
             drawPaths(mRight, Color(255, 0, 0, 255));
 
-        ::glfwSetCursor(glfwWindow(), mHorCursor);
+        ::glfwSetCursor(glfwWindow(), mLeftRightCursor.glfwCursor());
         return true;
     }
 
@@ -302,7 +295,7 @@ bool Win32MainWindow::resizeHitTest(const clipper::IntPoint& point)
         if(mDrawHitTest)
             drawPaths(mTop, Color(255, 0, 0, 255));
 
-        ::glfwSetCursor(glfwWindow(), mVertCursor);
+        ::glfwSetCursor(glfwWindow(), mTopBottomCursor.glfwCursor());
         return true;
     }
 
@@ -311,7 +304,7 @@ bool Win32MainWindow::resizeHitTest(const clipper::IntPoint& point)
         if(mDrawHitTest)
             drawPaths(mBottom, Color(255, 0, 0, 255));
 
-        ::glfwSetCursor(glfwWindow(), mVertCursor);
+        ::glfwSetCursor(glfwWindow(), mTopBottomCursor.glfwCursor());
         return true;
     }
 
@@ -329,7 +322,7 @@ bool Win32MainWindow::resizeHitTest(const clipper::IntPoint& point)
         if(mDrawHitTest)
             drawPaths(mLeftBottom, Color(255, 0, 0, 255));
 
-        ::glfwSetCursor(glfwWindow(), mVertCursor);
+        ::glfwSetCursor(glfwWindow(), mRightTopCursor.glfwCursor());
         return true;
     }
 
@@ -347,11 +340,11 @@ bool Win32MainWindow::resizeHitTest(const clipper::IntPoint& point)
         if(mDrawHitTest)
             drawPaths(mRightTop, Color(255, 0, 0, 255));
 
-        ::glfwSetCursor(glfwWindow(), mVertCursor);
+        ::glfwSetCursor(glfwWindow(), mRightTopCursor.glfwCursor());
         return true;
     }
 
-    ::glfwSetCursor(glfwWindow(), mArrowCursor);
+    ::glfwSetCursor(glfwWindow(), mArrowCursor.glfwCursor());
     return false;
 }
 
